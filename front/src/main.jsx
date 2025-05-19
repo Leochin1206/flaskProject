@@ -10,7 +10,6 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <div className="min-h-screen flex flex-col sm:flex-row">
-        <Navbar />
         <div className=" sm:!pt-0 flex-grow">
           <main className="min-h-screen">
             <App />
