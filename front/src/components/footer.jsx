@@ -4,5 +4,5 @@ export function Footer() {
         sm:text-[14px]">
             © 2025 Leonardo A. Viana – Todos os direitos reservados
         </footer>
-    )
+    );
 }

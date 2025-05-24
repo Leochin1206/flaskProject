@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 export function Cadastro() {
-    const [user, setUser] = useState('');
+    const [nameUser, setNameUser] = useState('');
     const [email, setEmail] = useState('');
     const [telefone, setTelefone] = useState('');
     const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ export function Cadastro() {
     };
 
     return (
-        <div className="flex items-center justify-center h-[100vh] bg-[#f8f5f5]">
+        <div className="flex items-center justify-center h-[100vh] bg-[#FDFDFE]">
             <div className="flex items-center justify-evenly flex-col h-165 w-115 bg-white rounded shadow">
                 <div className="flex items-center justify-center gap-2 font-bold">
                     <img src={logo} alt="" className="w-[42px]" />
@@ -39,7 +39,7 @@ export function Cadastro() {
 
                     <div className="flex flex-col items-start w-full">
                         <label htmlFor="name" className="font-bold text-[15px] text-[#1A2B4C]">Nome completo:</label>
-                        <input type="text" name="name" placeholder="nome..." value={user} onChange={(e) => setUser(e.target.value)} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
+                        <input type="text" name="name" placeholder="nome..." value={nameUser} onChange={(e) => setNameUser(e.target.value)} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                     </div>
 
                     <div className="flex flex-col items-start w-full !mt-3">

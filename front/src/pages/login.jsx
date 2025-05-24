@@ -20,7 +20,7 @@ export function Login() {
     };
 
     return (
-        <div className="flex items-center justify-center h-[100vh] bg-[#f8f5f5]">
+        <div className="flex items-center justify-center h-[100vh] bg-[#FDFDFE]">
             <div className="flex items-center justify-evenly flex-col h-111 w-100 bg-white rounded shadow">
                 <div className="flex items-center justify-center gap-2 font-bold">
                     <img src={logo} alt="" className="w-[42px]" />
@@ -43,5 +43,5 @@ export function Login() {
                 <h1 className="text-[18px] font-medium">Não tem uma Conta? <Link to="/cadastro" className="text-[#10B981]">Cadastre-se</Link></h1>
             </div>
         </div>
-    )
+    );
 }
