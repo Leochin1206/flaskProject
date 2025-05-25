@@ -6,12 +6,19 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export function Login() {
 
-    const [user, setUser] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
     const navigate = useNavigate();
 
     const logar = async () => {
         try {
+            console.log(formData)
             navigate('/home');
         } catch (error) {
             console.error("Erro ao fazer login:", error);
@@ -29,13 +36,13 @@ export function Login() {
                 <form className="flex flex-col items-center w-[85%]" onSubmit={logar}>
                     <h1 className="font-bold text-[26px] text-[#1A2B4C] !mb-4">Login</h1>
                     <div className="flex flex-col items-start w-full">
-                        <label htmlFor="name" className="font-bold text-[15px] text-[#1A2B4C]">Nome:</label>
-                        <input type="text" name="name" placeholder="nome..." value={user} onChange={(e) => setUser(e.target.value)} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required/>
+                        <label htmlFor="email" className="font-bold text-[15px] text-[#1A2B4C]">Email:</label>
+                        <input type="text" name="email" placeholder="e-mail..." value={formData.email} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                     </div>
 
                     <div className="flex flex-col items-start w-full">
                         <label htmlFor="password" className="font-bold text-[15px] text-[#1A2B4C] !mt-3">Senha:</label>
-                        <input type="password" name="password" placeholder="senha..." value={password} onChange={(e) => setPassword(e.target.value)} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required/>
+                        <input type="password" name="password" placeholder="senha..." value={formData.password} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                     </div>
 
                     <button type="submit" className="!p-2 w-[200px] rounded text-white font-bold text-[20px] bg-[#10B981] transition-all hover:scale-110 !mt-4">Entrar</button>
