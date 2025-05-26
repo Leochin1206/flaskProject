@@ -5,11 +5,11 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export function Cadastro() {
     const [formData, setFormData] = useState({
-        nameUser: "",
+        nome: "",
         email: "",
         telefone: "",
-        password: "",
-        confirmPassword: "",
+        senha: "",
+        confirmarSenha: "",
 
     });
 
@@ -19,54 +19,45 @@ export function Cadastro() {
 
     const navigate = useNavigate();
 
+
     const cadastrar = async (e) => {
         e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.senha !== formData.confirmarSenha) {
             alert("As senhas não coincidem!");
             return;
         }
 
         try {
-            console.log(formData)
+            const response = await axios.post(' http://127.0.0.1:5000/auth/register', {
+                nome: formData.nome,
+                email: formData.email,
+                telefone: formData.telefone,
+                senha: formData.senha
+            });
+            console.log("token", token);
+            localStorage.setItem('token', response.data.access);
+            localStorage.setItem('refresh', response.data.refresh);
+            console.log(response.data.access);
+            alert("Usuário cadastrado com sucesso!");
             navigate('/home');
         } catch (error) {
-            console.error("Erro ao cadastrar:", error);
-            alert("Erro ao cadastrar. Verifique os dados.");
+            console.error("Erro ao cadastrar usuário:", error);
+            if (error.response?.data) {
+                console.log("Detalhes do erro:", error.response.data);
+                alert("Erro ao cadastrar: " + JSON.stringify(error.response.data));
+            } else {
+                alert("Erro ao cadastrar. Tente novamente.");
+            }
         }
-    };
 
+    };
     const campos = [
-        {
-            labelText: "Nome",
-            id: "nameUser",
-            placeholder: "Digite seu nome",
-            type: "text",
-        },
-        {
-            labelText: "Email",
-            id: "email",
-            placeholder: "Digite seu email",
-            type: "email",
-        },
-        {
-            labelText: "Telefone",
-            id: "telefone",
-            placeholder: "Digite seu telefone",
-            type: "tel",
-        },
-        {
-            labelText: "Senha",
-            id: "password",
-            placeholder: "Digite sua senha",
-            type: "password",
-        },
-        {
-            labelText: "Confirmar senha",
-            id: "confirmPassword",
-            placeholder: "Confirme sua senha",
-            type: "password",
-        },
+        {labelText: "Nome", id: "nome", placeholder: "Digite seu nome", type: "text"},
+        {labelText: "Email", id: "email", placeholder: "Digite seu e-mail", type: "email"},
+        {labelText: "Telefone", id: "telefone", placeholder: "Digite seu telefone", type: "tel"},
+        {labelText: "Senha", id: "senha", placeholder: "Digite sua senha", type: "password"},
+        {labelText: "Confirmar senha", id: "confirmarSenha", placeholder: "Confirme sua senha", type: "password"},
     ];
 
     return (
@@ -80,7 +71,7 @@ export function Cadastro() {
                     <h1 className="font-bold text-[26px] text-[#1A2B4C] !mb-4">Cadastro</h1>
 
                     {campos.map((campo) => (
-                        <div className="flex flex-col items-start w-full !mb-3">
+                        <div key={campo.id} className="flex flex-col items-start w-full !mb-3">
                             <label htmlFor={campo.id} className="font-bold text-[15px] text-[#1A2B4C]">{campo.labelText}</label>
                             <input type={campo.type} name={campo.id} placeholder={campo.placeholder} value={formData[campo.id]} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                         </div>

@@ -98,7 +98,7 @@ export function ModalTransacao({ isOpen, onClose }) {
             <label className="font-bold text-[15px] text-[#1A2B4C] !mb-1">Categoria:</label>
             <Listbox value={formData.categoria} onChange={handleCategoriaChange}>
               <div className="relative w-full">
-                <Listbox.Button className="w-full py-2 pl-3 pr-10 text-left bg-white rounded border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <Listbox.Button className="w-full py-2 !p-2 !pl-3 pr-10 text-left bg-white rounded border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
                   <span className="flex items-center gap-2 text-gray-700">
                     {categoriaSelecionada ? (
                       <>
@@ -109,7 +109,7 @@ export function ModalTransacao({ isOpen, onClose }) {
                       <span className="text-gray-400">Selecione uma categoria</span>
                     )}
                   </span>
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-2">
+                  <span className="absolute inset-y-0 right-0 flex items-center !pr-2">
                     <ChevronDown size={20} />
                   </span>
                 </Listbox.Button>
@@ -120,7 +120,7 @@ export function ModalTransacao({ isOpen, onClose }) {
                       key={item.value}
                       value={item.value}
                       className={({ active }) =>
-                        `cursor-default select-none py-2 pl-8 flex items-center gap-2 ${active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'}`
+                        `cursor-default select-none py-2 !pl-8 flex items-center gap-2 ${active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'}`
                       }
                     >
                       {({ selected }) => (

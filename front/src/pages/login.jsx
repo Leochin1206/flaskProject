@@ -5,26 +5,35 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 export function Login() {
-
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+        nome: "",
+        senha: "",
     });
-
+    
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-    const navigate = useNavigate();
+    
 
-    const logar = async () => {
+    const logar = async (e) => {
+        e.preventDefault();
+        
         try {
-            console.log(formData)
+            const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+                nome: formData.nome,
+                senha: formData.senha
+            });
+            localStorage.setItem('token', response.data.access);
+            localStorage.setItem('refresh', response.data.refresh);
+            console.log(response.data.access)
             navigate('/home');
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Usuário ou senha incorretos. Tente novamente.");
         }
     };
+    
+    const navigate = useNavigate();
 
     return (
         <div className="flex items-center justify-center h-[100vh] bg-[#FDFDFE]">
@@ -36,13 +45,13 @@ export function Login() {
                 <form className="flex flex-col items-center w-[85%]" onSubmit={logar}>
                     <h1 className="font-bold text-[26px] text-[#1A2B4C] !mb-4">Login</h1>
                     <div className="flex flex-col items-start w-full">
-                        <label htmlFor="email" className="font-bold text-[15px] text-[#1A2B4C]">Email:</label>
-                        <input type="text" name="email" placeholder="e-mail..." value={formData.email} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
+                        <label htmlFor="nome" className="font-bold text-[15px] text-[#1A2B4C]">Nome:</label>
+                        <input type="text" name="nome" placeholder="nome..." value={formData.nome} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                     </div>
 
                     <div className="flex flex-col items-start w-full">
-                        <label htmlFor="password" className="font-bold text-[15px] text-[#1A2B4C] !mt-3">Senha:</label>
-                        <input type="password" name="password" placeholder="senha..." value={formData.password} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
+                        <label htmlFor="senha" className="font-bold text-[15px] text-[#1A2B4C] !mt-3">Senha:</label>
+                        <input type="password" name="senha" placeholder="senha..." value={formData.senha} onChange={handleChange} className="!p-2 border-1 border-gray-300 w-full rounded shadow text-gray-500" required />
                     </div>
 
                     <button type="submit" className="!p-2 w-[200px] rounded text-white font-bold text-[20px] bg-[#10B981] transition-all hover:scale-110 !mt-4">Entrar</button>

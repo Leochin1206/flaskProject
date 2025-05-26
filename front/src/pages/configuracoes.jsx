@@ -23,30 +23,10 @@ export function Configuracoes() {
   };
 
   const campos = [
-    {
-      labelText: "Nome",
-      id: "nameUser",
-      placeholder: "Digite seu nome",
-      type: "text",
-    },
-    {
-      labelText: "Email",
-      id: "email",
-      placeholder: "Digite seu email",
-      type: "email",
-    },
-    {
-      labelText: "Telefone",
-      id: "telefone",
-      placeholder: "Digite seu telefone",
-      type: "tel",
-    },
-    {
-      labelText: "Senha",
-      id: "password",
-      placeholder: "Digite sua senha",
-      type: "password",
-    },
+    {labelText: "Nome", id: "nameUser", placeholder: "Digite seu nome", type: "text"},
+    {labelText: "Email", id: "email", placeholder: "Digite seu email", type: "email"},
+    {labelText: "Telefone", id: "telefone",placeholder: "Digite seu telefone", type: "tel"},
+    {labelText: "Senha", id: "password", placeholder: "Digite sua senha", type: "password"},
   ];
 
   return (

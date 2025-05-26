@@ -1,24 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ModalTransacao } from "../components/modalTransacao";
 import { Plus } from "lucide-react";
 
 export function Transacoes() {
+  const [transacoes, setTransacoes] = useState([]);
   const [modalTransacao, setModalTransacao] = useState(false);
   const [filtro, setFiltro] = useState("24h");
 
-  const transacoes = [];
-
+  const token = localStorage.getItem('token');
   const agora = new Date();
+
   const filtrarPorData = (dataTransacao) => {
     const data = new Date(dataTransacao);
     const diffHoras = (agora - data) / (1000 * 60 * 60);
     if (filtro === "24h") return diffHoras <= 24;
-    if (filtro === "7d") return diffHoras <= 168; 
-    if (filtro === "30d") return diffHoras <= 720; 
+    if (filtro === "7d") return diffHoras <= 168;
+    if (filtro === "30d") return diffHoras <= 720;
     return true;
   };
 
   const transacoesFiltradas = transacoes.filter((t) => filtrarPorData(t.data));
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchData = async () => {
+      console.log("token", token);
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/transacoes/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTransacoes(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+    fetchData();
+  }, [token]);
 
   return (
     <div className="flex flex-col items-end w-[100%] bg-[#FDFDFE]">
@@ -32,7 +51,7 @@ export function Transacoes() {
         </div>
 
         <button onClick={() => setModalTransacao(true)} className="flex items-center justify-center text-[20px] text-white font-medium rounded w-[80%] sm:w-[40%] !p-2 !mt-3 bg-[#3D7DDF]">
-          <Plus size={24}/> Adicionar Transação
+          <Plus size={24} /> Adicionar Transação
         </button>
 
         <ModalTransacao isOpen={modalTransacao} onClose={() => setModalTransacao(false)} />
