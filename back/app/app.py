@@ -9,17 +9,13 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'chave_default_para_dev')
-
-    # ✅ CORS habilitado para todas as origens (desenvolvimento)
-    CORS(app)
-
-
-
+ 
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
 
-    # Importa e registra Blueprints
+    CORS(app)
+
     from app.auth import auth_bp
     from app.resources.usuario_routes import usuario_bp
     from app.resources.transacao_routes import transacao_bp
