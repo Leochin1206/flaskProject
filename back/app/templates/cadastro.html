@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../static/images/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Cadastro - Finzy</title>
+</head>
+
+<body class="bg-[#FDFDFE] h-screen flex items-center justify-center">
+    <div class="flex items-center justify-evenly flex-col h-[660px] w-[460px] bg-white rounded shadow">
+        <div class="flex items-center justify-center gap-2 font-bold">
+            <img src="../static/images/logo.png" alt="Logo Finzy" class="w-[42px]" />
+            <h1 class="text-[34px]">Finzy</h1>
+        </div>
+
+        <form id="cadastroForm" class="flex flex-col items-center w-[85%]">
+            <h1 class="font-bold text-[26px] text-[#1A2B4C] mb-4">Cadastro</h1>
+
+            <div class="flex flex-col items-start w-full mb-3">
+                <label for="nome" class="font-bold text-[15px] text-[#1A2B4C]">Nome:</label>
+                <input type="text" id="nome" name="nome" placeholder="Digite seu nome"
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required>
+            </div>
+
+            <div class="flex flex-col items-start w-full mb-3">
+                <label for="email" class="font-bold text-[15px] text-[#1A2B4C]">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Digite seu e-mail"
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required>
+            </div>
+
+            <div class="flex flex-col items-start w-full mb-3">
+                <label for="telefone" class="font-bold text-[15px] text-[#1A2B4C]">Telefone:</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="Digite seu telefone"
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required>
+            </div>
+
+            <div class="flex flex-col items-start w-full mb-3">
+                <label for="senha" class="font-bold text-[15px] text-[#1A2B4C]">Senha:</label>
+                <input type="password" id="senha" name="senha" placeholder="Digite sua senha"
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required>
+            </div>
+
+            <div class="flex flex-col items-start w-full mb-3">
+                <label for="confirmarSenha" class="font-bold text-[15px] text-[#1A2B4C]">Confirmar senha:</label>
+                <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha"
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required>
+            </div>
+
+            <button type="submit"
+                class="p-2 w-[200px] rounded text-white font-bold text-[20px] bg-[#10B981] transition-all hover:scale-110 mt-4">Cadastrar-se</button>
+        </form>
+
+        <h1 class="text-[18px] font-medium">Já tem Conta? <a href="/" class="text-[#10B981]">Login</a></h1>          
+    </div>
+    <script src="../static/scripts/cadastro.js" defer></script>
+</body>
+
+</html>

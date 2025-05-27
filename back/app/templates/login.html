@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../static/images/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Finzy - Login</title>
+</head>
+
+<body class="flex items-center justify-center h-screen bg-[#FDFDFE]">
+    <div class="flex items-center justify-evenly flex-col p-8 bg-white rounded shadow w-[350px]">
+        <div class="flex items-center justify-center gap-2 font-bold mb-4">
+            <img src="../static/images/logo.png" alt="Logo Finzy" class="w-[42px]" />
+            <h1 class="text-[34px]">Finzy</h1>
+        </div>
+
+        <form id="loginForm" class="flex flex-col items-center w-full">
+            <h1 class="font-bold text-[26px] text-[#1A2B4C] mb-4">Login</h1>
+
+            <div class="flex flex-col items-start w-full">
+                <label for="nome" class="font-bold text-[15px] text-[#1A2B4C]">Nome:</label>
+                <input type="text" name="nome" id="nome" placeholder="nome..."
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required />
+            </div>
+
+            <div class="flex flex-col items-start w-full mt-3">
+                <label for="senha" class="font-bold text-[15px] text-[#1A2B4C]">Senha:</label>
+                <input type="password" name="senha" id="senha" placeholder="senha..."
+                    class="p-2 border border-gray-300 w-full rounded shadow text-gray-500" required />
+            </div>
+
+            <button type="submit"
+                class="p-2 w-[200px] rounded text-white font-bold text-[20px] bg-[#10B981] transition-all hover:scale-110 mt-4">
+                Entrar
+            </button>
+        </form>
+
+        <p class="text-[18px] font-medium mt-4">
+            Não tem uma Conta?
+            <a href="/cadastro" class="text-[#10B981]">Cadastre-se</a>
+        </p>
+    </div>
+
+    <script src="../static/scripts/login.js" defer></script>
+</body>
+
+</html>

@@ -1,15 +1,18 @@
+''' 
 from flask import Flask
 from flask_cors import CORS
 from app.extensions import db, jwt, bcrypt
 import os
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__,        
+                template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+                static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'chave_default_para_dev')
- 
+
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
@@ -32,7 +35,4 @@ def create_app():
         db.create_all()
 
     return app
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
+'''

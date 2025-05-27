@@ -29,16 +29,14 @@ export function Cadastro() {
         }
 
         try {
-            const response = await axios.post(' http://127.0.0.1:5000/auth/register', {
+            const response = await axios.post('http://127.0.0.1:5000/auth/register', {
                 nome: formData.nome,
                 email: formData.email,
                 telefone: formData.telefone,
                 senha: formData.senha
             });
-            console.log("token", token);
             localStorage.setItem('token', response.data.access);
             localStorage.setItem('refresh', response.data.refresh);
-            console.log(response.data.access);
             alert("Usuário cadastrado com sucesso!");
             navigate('/home');
         } catch (error) {
