@@ -1,25 +1,20 @@
-# app/__init__.py
-
 from flask import Flask, render_template
 from flask_cors import CORS
 from app.extensions import db, jwt, bcrypt
 import os
 
 def create_app():
-    app = Flask(__name__)  # Flask vai procurar templates/ e static/ dentro da pasta app automaticamente
+    app = Flask(__name__)  
 
-    # Configurações
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../instance/database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'chave_default_para_dev')
 
-    # Inicializa extensões
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
     CORS(app)
 
-    # Blueprints
     from app.auth import auth_bp
     from app.resources.usuario_routes import usuario_bp
     from app.resources.transacao_routes import transacao_bp
@@ -32,21 +27,39 @@ def create_app():
     app.register_blueprint(meta_bp, url_prefix='/meta')
     app.register_blueprint(configuracao_bp, url_prefix='/configuracao')
 
-    # Rotas de frontend
     @app.route('/')
     def login_page():
         return render_template('login.html')
 
-
     @app.route('/cadastro')
     def cadastro_page():
         return render_template('cadastro.html')
-    
+
     @app.route('/home')
-    def home():
+    def home_page():
         return render_template('home.html')
 
-    # Cria o banco de dados, se necessário
+    @app.route('/transacoes')
+    def transacoes_page():
+        return render_template('transacoes.html')
+
+    @app.route('/orcamentos')
+    def orcamentos_page():
+        return render_template('orcamentos.html')
+
+    @app.route('/metas')
+    def metas_page():
+        return render_template('metas.html')
+
+    @app.route('/relatorios')
+    def relatorios_page():
+        return render_template('relatorios.html')
+
+    @app.route('/configuracoes')
+    def configuracoes_page():
+        return render_template('configuracoes.html')
+
+
     with app.app_context():
         db.create_all()
 
