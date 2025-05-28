@@ -1,56 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="../static/images/logo.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <title>Finzy - Metas</title>
-  </head>
 
-  <body class="flex flex-col bg-gray-100 text-gray-900 ">
-    <nav class="flex items-center justify-between text-white p-3 bg-[#1A2B4C]">
-      <div class="flex items-center gap-2 font-bold ml-5">
-        <img src="../static/images/logo.png" alt="Logo" class="w-[42px]" />
-        <h1 class="text-[34px]">Finzy</h1>
-      </div>
-      <div class="flex gap-7 mr-5">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../static/images/logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <title>Finzy - Metas</title>
+</head>
+
+<body class="flex flex-col bg-gray-100 text-gray-900 ">
+  <nav class="flex items-center justify-between text-white p-3 bg-[#1A2B4C]">
+    <div class="flex items-center gap-2 font-bold ml-5">
+      <img src="../static/images/logo.png" alt="Logo" class="w-[42px]" />
+      <h1 class="text-[34px]">Finzy</h1>
+    </div>
+    <div class="flex gap-7 mr-5">
+      <a href="/home">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="home" class="w-6 h-6"></i>
-          <a href="/home" class="text-[17px] font-medium">Dashboards</a>
+          <h1 class="text-[14px] font-medium">Dashboards</h1>
         </div>
+      </a>
+
+      <a href="/transacoes">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="repeat" class="w-6 h-6"></i>
-          <a href="/transacoes" class="text-[17px] font-medium">Transações</a>
+          <h1 class="text-[14px] font-medium">Transações</h1>
         </div>
+      </a>
+
+      <a href="/orcamentos">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="file-text" class="w-6 h-6"></i>
-          <a href="/orcamentos" class="text-[17px] font-medium">Orçamentos</a>
+          <h1 class="text-[14px] font-medium">Orçamentos</h1>
         </div>
+      </a>
+
+      <a href="/metas">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="target" class="w-6 h-6"></i>
-          <a href="/metas" class="text-[17px] font-medium">Metas</a>
+          <h1 class="text-[14px] font-medium">Metas</h1>
         </div>
+      </a>
+
+      <a href="/relatorios">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="flag" class="w-6 h-6"></i>
-          <a href="/relatorios" class="text-[17px] font-medium">Relatórios</a>
+          <h1 class="text-[14px] font-medium">Relatórios</h1>
         </div>
+      </a>
+
+      <a href="/configuracoes">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="settings" class="w-6 h-6"></i>
-          <a href="/configuracoes" class="text-[17px] font-medium">Configurações</a>
+          <h1 class="text-[14px] font-medium">Configurações</h1>
         </div>
+      </a>
+
+      <a href="/">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="log-out" class="w-6 h-6"></i>
-          <a href="/" class="text-[17px] font-medium">Sair</a>
+          <h1 class="text-[14px] font-medium">Sair</h1>
         </div>
-      </div>
-    </nav>
+      </a>
 
-    <main class="">
-      <h1 class="text-3xl font-bold text-center !mt-10">Bem-vindo ao Metas!</h1>
-    </main>
+    </div>
+  </nav>
 
-    <script>lucide.createIcons();</script>
-  </body>
+  <main class="">
+    <h1 class="text-3xl font-bold text-center !mt-10">Bem-vindo ao Metas!</h1>
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
 </html>

@@ -1,56 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="../static/images/logo.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <title>Finzy - Transações</title>
-  </head>
 
-  <body class="flex flex-col bg-gray-100 text-gray-900 ">
-    <nav class="flex items-center justify-between text-white p-3 bg-[#1A2B4C]">
-      <div class="flex items-center gap-2 font-bold ml-5">
-        <img src="../static/images/logo.png" alt="Logo" class="w-[42px]" />
-        <h1 class="text-[34px]">Finzy</h1>
-      </div>
-      <div class="flex gap-7 mr-5">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../static/images/logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <title>Finzy - Transações</title>
+</head>
+
+<body class="flex flex-col bg-gray-100 text-gray-900 ">
+  <nav class="flex items-center justify-between text-white p-3 bg-[#1A2B4C]">
+    <div class="flex items-center gap-2 font-bold ml-5">
+      <img src="../static/images/logo.png" alt="Logo" class="w-[42px]" />
+      <h1 class="text-[34px]">Finzy</h1>
+    </div>
+    <div class="flex gap-7 mr-5">
+      <a href="/home">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="home" class="w-6 h-6"></i>
-          <a href="/home" class="text-[17px] font-medium">Dashboards</a>
+          <h1 class="text-[14px] font-medium">Dashboards</h1>
         </div>
+      </a>
+
+      <a href="/transacoes">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="repeat" class="w-6 h-6"></i>
-          <a href="/transacoes" class="text-[17px] font-medium">Transações</a>
+          <h1 class="text-[14px] font-medium">Transações</h1>
         </div>
+      </a>
+
+      <a href="/orcamentos">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="file-text" class="w-6 h-6"></i>
-          <a href="/orcamentos" class="text-[17px] font-medium">Orçamentos</a>
+          <h1 class="text-[14px] font-medium">Orçamentos</h1>
         </div>
+      </a>
+
+      <a href="/metas">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="target" class="w-6 h-6"></i>
-          <a href="/metas" class="text-[17px] font-medium">Metas</a>
+          <h1 class="text-[14px] font-medium">Metas</h1>
         </div>
+      </a>
+
+      <a href="/relatorios">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="flag" class="w-6 h-6"></i>
-          <a href="/relatorios" class="text-[17px] font-medium">Relatórios</a>
+          <h1 class="text-[14px] font-medium">Relatórios</h1>
         </div>
+      </a>
+
+      <a href="/configuracoes">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="settings" class="w-6 h-6"></i>
-          <a href="/configuracoes" class="text-[17px] font-medium">Configurações</a>
+          <h1 class="text-[14px] font-medium">Configurações</h1>
         </div>
+      </a>
+
+      <a href="/">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="log-out" class="w-6 h-6"></i>
-          <a href="/" class="text-[17px] font-medium">Sair</a>
+          <h1 class="text-[14px] font-medium">Sair</h1>
         </div>
+      </a>
+
+    </div>
+  </nav>
+
+  <main class="flex flex-col items-center justify-center">
+    <h1 class="text-[#1A2B4C] text-[30px] font-medium !mt-4 w-full text-center">Transações</h1>
+
+    <div class="flex items-center justify-between gap-2 w-[80%] sm:w-[40%] border border-gray-300 rounded p-1 mt-3">
+      <button class="text-[18px] text-gray-600 font-medium w-[33.3%] p-1 hover:scale-110 transition-all">Hoje</button>
+      <button
+        class="text-[18px] text-gray-600 font-medium w-[33.3%] border-l border-r border-gray-300 p-1 hover:scale-110 transition-all">Semana</button>
+      <button class="text-[18px] text-gray-600 font-medium w-[33.3%] p-1 hover:scale-110 transition-all">Mês</button>
+    </div>
+
+
+    <div class="p-8">
+      <button onclick="abrirModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Nova Transação</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalTransacao" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-30 z-50">
+      <div class="bg-white rounded-lg p-6 w-[90%] max-w-[800px] shadow-lg">
+        <h1 class="text-2xl text-[#1A2B4C] font-semibold">Nova Transação</h1>
+        <form id="formTransacao" class="mt-4 space-y-4">
+
+          <!-- Tipo -->
+          <div>
+            <label class="block text-[#1A2B4C] font-bold mb-1">Tipo:</label>
+            <div class="flex gap-5">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="entrada" required />
+                Entrada
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="saida" />
+                Saída
+              </label>
+            </div>
+          </div>
+
+          <!-- Valor -->
+          <div>
+            <label for="valor" class="block text-[#1A2B4C] font-bold mb-1">Valor:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor" id="valor" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+          </div>
+
+          <!-- Categoria -->
+          <div>
+            <label for="categoria" class="block text-[#1A2B4C] font-bold mb-1">Categoria:</label>
+            <select name="categoria" id="categoria" required
+              class="w-full p-2 border border-gray-300 rounded shadow text-gray-700">
+              <option value="">Selecione uma categoria</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="transporte">Transporte</option>
+              <option value="moradia">Moradia</option>
+              <option value="lazer">Lazer</option>
+              <option value="saude">Saúde</option>
+              <option value="educacao">Educação</option>
+              <option value="compras">Compras</option>
+              <option value="assinaturas">Assinaturas</option>
+              <option value="salario">Salário</option>
+              <option value="investimentos">Investimentos</option>
+              <option value="dividas">Dívidas</option>
+              <option value="presentes">Presentes</option>
+              <option value="impostos">Impostos</option>
+              <option value="viagens">Viagens</option>
+              <option value="pets">Pets</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <!-- Data -->
+          <div>
+            <label for="data" class="block text-[#1A2B4C] font-bold mb-1">Data:</label>
+            <input type="date" name="data" id="data" required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <!-- Descrição -->
+          <div>
+            <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
+            <input type="text" name="descricao" id="descricao" placeholder="nome..." required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <!-- Botões -->
+          <div class="flex justify-end gap-4 pt-4">
+            <button type="button" onclick="fecharModal()"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+              Adicionar
+            </button>
+          </div>
+        </form>
       </div>
-    </nav>
+    </div>
+  </main>
 
-    <main class="">
-      <h1 class="text-3xl font-bold text-center !mt-10">Bem-vindo ao Transações!</h1>
-    </main>
+  <script>lucide.createIcons();</script>
+  <script src="../static/scripts/transacoes.js" defer></script>
+</body>
 
-    <script>lucide.createIcons();</script>
-  </body>
 </html>
