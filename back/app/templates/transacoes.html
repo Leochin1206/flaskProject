@@ -80,17 +80,15 @@
     </div>
 
 
-    <div class="p-8">
-      <button onclick="abrirModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Nova Transação</button>
+    <div class="w-[80%] sm:w-[40%] !mt-4">
+      <button onclick="abrirModal()" class="bg-blue-600 text-white rounded w-full p-3">+ Nova Transação</button>
     </div>
 
-    <!-- Modal -->
-    <div id="modalTransacao" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-30 z-50">
+    <div id="modalTransacao" class="fixed inset-0 hidden flex items-center justify-center bg-black bg-opacity-30 z-50">
       <div class="bg-white rounded-lg p-6 w-[90%] max-w-[800px] shadow-lg">
         <h1 class="text-2xl text-[#1A2B4C] font-semibold">Nova Transação</h1>
         <form id="formTransacao" class="mt-4 space-y-4">
 
-          <!-- Tipo -->
           <div>
             <label class="block text-[#1A2B4C] font-bold mb-1">Tipo:</label>
             <div class="flex gap-5">
@@ -105,7 +103,7 @@
             </div>
           </div>
 
-          <!-- Valor -->
+
           <div>
             <label for="valor" class="block text-[#1A2B4C] font-bold mb-1">Valor:</label>
             <div class="relative">
@@ -115,7 +113,6 @@
             </div>
           </div>
 
-          <!-- Categoria -->
           <div>
             <label for="categoria" class="block text-[#1A2B4C] font-bold mb-1">Categoria:</label>
             <select name="categoria" id="categoria" required
@@ -140,21 +137,19 @@
             </select>
           </div>
 
-          <!-- Data -->
+
           <div>
             <label for="data" class="block text-[#1A2B4C] font-bold mb-1">Data:</label>
             <input type="date" name="data" id="data" required
               class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
           </div>
 
-          <!-- Descrição -->
           <div>
             <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
             <input type="text" name="descricao" id="descricao" placeholder="nome..." required
               class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
           </div>
 
-          <!-- Botões -->
           <div class="flex justify-end gap-4 pt-4">
             <button type="button" onclick="fecharModal()"
               class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
