@@ -67,7 +67,9 @@ const transacoesTipo = [
   { nome: "Outro", icone: "more-horizontal", value: "outro" }
 ];
 
-document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', carregarTransacoes);
+
+async function carregarTransacoes() {
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -95,33 +97,67 @@ document.addEventListener('DOMContentLoaded', async function () {
         const icone = tipoObj ? tipoObj.icone : "more-horizontal";
 
         const li = document.createElement('li');
-        li.className = "flex items-start justify-between gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
+        li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
 
         li.innerHTML = `
-        <div>
-          <div class="mb-1"><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
-          <div class="mb-1 text-green-600 font-bold"><span class="font-semibold">Valor:</span> R$${t.valor.toFixed(2)}</div>
-          <div class="mb-1"><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
-          <div class="mb-1"><span class="font-semibold">Data:</span> ${t.data}</div>
-          <div><span class="font-semibold">Descrição:</span> ${t.descricao}</div>
-        </div>
-        <div class="text-blue-600 mt-1" data-lucide="${icone}"></div>
+          <div class="absolute top-4 right-4 text-blue-600 w-10 h-10" data-lucide="${icone}"></div>
+
+          <div class="w-full space-y-2">
+            <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
+            <div class="text-green-600 font-bold"><span class="font-semibold">Valor:</span> R$${t.valor.toFixed(2)}</div>
+            <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
+            <div><span class="font-semibold">Data:</span> ${t.data}</div>
+            <div><span class="font-semibold">Descrição:</span> ${t.descricao}</div>
+
+            <div class="flex justify-end gap-4 pt-2">
+              <button class="text-sm text-blue-600 hover:underline">Editar</button>
+              <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
+            </div>
+          </div>
         `;
 
         ul.appendChild(li);
       });
 
       lucide.createIcons();
-
     } else {
       alert("Erro ao carregar transações: " + (data.msg || data.error));
     }
-
   } catch (err) {
     console.error(err);
     alert("Erro ao buscar transações.");
   }
-});
+}
+
+
+async function deletarTransacao(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir esta transação?");
+  if (!confirmar) return;
+
+  const token = localStorage.getItem('token');
+
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/transacao/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(result.msg || "Transação deletada com sucesso!");
+      carregarTransacoes();
+    } else {
+      alert("Erro ao deletar transação: " + (result.msg || result.error));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao tentar deletar transação.");
+  }
+}
+
 
 function abrirModal() {
   document.getElementById('modalTransacao').classList.remove('hidden');
