@@ -81,7 +81,7 @@
 
 
     <div class="w-[80%] sm:w-[40%] !mt-4">
-      <button onclick="abrirModal()" class="bg-blue-600 text-white rounded w-full p-3">+ Nova Transação</button>
+      <button onclick="abrirModal()" class="bg-blue-600 text-white rounded w-full p-3 mb-5">+ Nova Transação</button>
     </div>
 
     <div id="modalTransacao" class="fixed inset-0 hidden flex items-center justify-center bg-black bg-opacity-30 z-50">
@@ -162,7 +162,12 @@
         </form>
       </div>
     </div>
+ 
+    <div class="flex flex-col items-center justify-center w-full">
+      <ul id="listaTransacoes" class="list-none"></ul>
+    </div>
   </main>
+
 
   <script>lucide.createIcons();</script>
   <script src="../static/scripts/transacoes.js" defer></script>
