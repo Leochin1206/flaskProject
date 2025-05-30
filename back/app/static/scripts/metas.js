@@ -3,12 +3,14 @@ document.getElementById('formMeta').addEventListener('submit', async function (e
 
   const formData = new FormData(this);
   const jsonData = {
-    tipo: formData.get('tipo'),
-    valor: parseFloat(formData.get('valor')),
-    categoria: formData.get('categoria'),
-    data: formData.get('data'),
+    nome: formData.get('nome'),
     descricao: formData.get('descricao'),
-    id_usuario: 1
+    categoria: formData.get('categoria'),
+    valor_objetivo: parseFloat(formData.get('valor_objetivo')),
+    data_limite: formData.get('data_limite') || "2025-12-31", 
+    data_criacao: new Date().toISOString().split('T')[0], 
+    id_usuario: 1,
+    id_transacao: 1
   };
 
   console.log("Enviando dados:", jsonData);
@@ -22,7 +24,7 @@ document.getElementById('formMeta').addEventListener('submit', async function (e
     }
 
 
-    const apiUrl = 'http://127.0.0.1:5000/meta';
+    const apiUrl = 'http://127.0.0.1:5000/meta/';
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {

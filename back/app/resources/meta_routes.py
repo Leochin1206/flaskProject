@@ -21,20 +21,22 @@ def get_meta(id):
 @jwt_required()
 def create_meta():
     data = request.json
+    print("Recebido:", data)
 
-    # Conversão explícita de strings para objetos datetime.date
     if "data_limite" in data:
         data["data_limite"] = datetime.strptime(data["data_limite"], "%Y-%m-%d").date()
     if "data_criacao" in data:
         data["data_criacao"] = datetime.strptime(data["data_criacao"], "%Y-%m-%d").date()
 
-    m = Meta(**data)
-    db.session.add(m)
-    db.session.commit()
+    try:
+        m = Meta(**data)
+        db.session.add(m)
+        db.session.commit()
+    except Exception as e:
+        print("Erro ao salvar no banco:", e)
+        return jsonify({'error': 'Erro interno ao salvar meta'}), 500
     
     return jsonify({'msg': 'Meta criada com sucesso', 'id': m.id}), 201
-
-from datetime import datetime
 
 @meta_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
@@ -42,7 +44,6 @@ def update_meta(id):
     data = request.json
     m = Meta.query.get_or_404(id)
 
-    # Conversão de datas, se fornecidas
     if "data_limite" in data:
         data["data_limite"] = datetime.strptime(data["data_limite"], "%Y-%m-%d").date()
     if "data_criacao" in data:
