@@ -69,10 +69,176 @@
     </div>
   </nav>
 
-  <main class="">
-    <h1 class="text-3xl font-bold text-center !mt-10">Bem-vindo ao Metas!</h1>
+  <main class="flex flex-col items-center justify-center">
+    <div class="w-[80%] sm:w-[40%] !mt-4">
+      <button onclick="abrirModal()" class="bg-blue-600 text-white rounded w-full p-3 mb-5">+ Nova Meta</button>
+    </div>
+
+    <div id="modalMeta" class="fixed inset-0 hidden flex items-center justify-center bg-black bg-opacity-30 z-50">
+      <div class="bg-white rounded-lg p-6 w-[90%] max-w-[800px] shadow-lg">
+        <h1 class="text-2xl text-[#1A2B4C] font-semibold">Nova Meta</h1>
+        <form id="formMeta" class="mt-4 space-y-4">
+
+          <div>
+            <label class="block text-[#1A2B4C] font-bold mb-1">Tipo:</label>
+            <div class="flex gap-5">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="entrada" required />
+                Entrada
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="saida" />
+                Saída
+              </label>
+            </div>
+          </div>
+
+
+          <div>
+            <label for="valor" class="block text-[#1A2B4C] font-bold mb-1">Valor:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor" id="valor" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+          </div>
+
+          <div>
+            <label for="categoria" class="block text-[#1A2B4C] font-bold mb-1">Categoria:</label>
+            <select name="categoria" id="categoria" required
+              class="w-full p-2 border border-gray-300 rounded shadow text-gray-700">
+              <option value="">Selecione uma categoria</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="transporte">Transporte</option>
+              <option value="moradia">Moradia</option>
+              <option value="lazer">Lazer</option>
+              <option value="saude">Saúde</option>
+              <option value="educacao">Educação</option>
+              <option value="compras">Compras</option>
+              <option value="assinaturas">Assinaturas</option>
+              <option value="salario">Salário</option>
+              <option value="investimentos">Investimentos</option>
+              <option value="dividas">Dívidas</option>
+              <option value="presentes">Presentes</option>
+              <option value="impostos">Impostos</option>
+              <option value="viagens">Viagens</option>
+              <option value="pets">Pets</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+
+          <div>
+            <label for="data" class="block text-[#1A2B4C] font-bold mb-1">Data:</label>
+            <input type="date" name="data" id="data" required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <div>
+            <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
+            <input type="text" name="descricao" id="descricao" placeholder="nome..." required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <div class="flex justify-end gap-4 pt-4">
+            <button type="button" onclick="fecharModal()"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+              Adicionar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modalMetaEdit" class="fixed inset-0 hidden flex items-center justify-center bg-black bg-opacity-30 z-50">
+      <div class="bg-white rounded-lg p-6 w-[90%] max-w-[800px] shadow-lg">
+        <h1 class="text-2xl text-[#1A2B4C] font-semibold">Editar Meta</h1>
+        <form id="formMetaEdit" class="mt-4 space-y-4">
+
+          <div>
+            <label class="block text-[#1A2B4C] font-bold mb-1">Tipo:</label>
+            <div class="flex gap-5">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="entrada" required />
+                Entrada
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tipo" value="saida" />
+                Saída
+              </label>
+            </div>
+          </div>
+
+
+          <div>
+            <label for="valor" class="block text-[#1A2B4C] font-bold mb-1">Valor:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor" id="valor" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+          </div>
+
+          <div>
+            <label for="categoria" class="block text-[#1A2B4C] font-bold mb-1">Categoria:</label>
+            <select name="categoria" id="categoria" required
+              class="w-full p-2 border border-gray-300 rounded shadow text-gray-700">
+              <option value="">Selecione uma categoria</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="transporte">Transporte</option>
+              <option value="moradia">Moradia</option>
+              <option value="lazer">Lazer</option>
+              <option value="saude">Saúde</option>
+              <option value="educacao">Educação</option>
+              <option value="compras">Compras</option>
+              <option value="assinaturas">Assinaturas</option>
+              <option value="salario">Salário</option>
+              <option value="investimentos">Investimentos</option>
+              <option value="dividas">Dívidas</option>
+              <option value="presentes">Presentes</option>
+              <option value="impostos">Impostos</option>
+              <option value="viagens">Viagens</option>
+              <option value="pets">Pets</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+
+          <div>
+            <label for="data" class="block text-[#1A2B4C] font-bold mb-1">Data:</label>
+            <input type="date" name="data" id="data" required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <div>
+            <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
+            <input type="text" name="descricao" id="descricao" placeholder="nome..." required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+          </div>
+
+          <div class="flex justify-end gap-4 pt-4">
+            <button type="button" onclick="fecharModalEdit()"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+              Atualizar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center justify-center w-full">
+      <ul id="listaMetas" class="list-none"></ul>
+    </div>
   </main>
 
+  <script src="../static/scripts/metas.js" defer></script>
   <script>lucide.createIcons();</script>
 </body>
+
 </html>

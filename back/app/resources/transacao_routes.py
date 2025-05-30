@@ -58,18 +58,30 @@ def create_transacao():
 @transacao_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_transacao(id):
-    data = request.json
+    try:
+        data = request.json
+        if "data" in data:
+            if data["data"]:
+                try:
+                    data["data"] = datetime.strptime(data["data"], "%Y-%m-%d").date()
+                except ValueError:
+                    return jsonify({"msg": "Formato de data inválido"}), 400
+            else:
+                # Remover o campo se estiver vazio
+                data.pop("data")
+        t = Transacao.query.get_or_404(id)
+        for k, v in data.items():
+            setattr(t, k, v)
 
-    if "data" in data:
-        data["data"] = datetime.strptime(data["data"], "%Y-%m-%d").date()
-    if "data_criacao" in data:
-        data["data_criacao"] = datetime.strptime(data["data_criacao"], "%Y-%m-%d").date()
+        db.session.commit()
+        return jsonify({'msg': 'Transação atualizada com sucesso'})
 
-    t = Transacao.query.get_or_404(id)
-    for k, v in data.items():
-        setattr(t, k, v)
-    db.session.commit()
-    return jsonify({'msg': 'Transação atualizada com sucesso'})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 
 @transacao_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()

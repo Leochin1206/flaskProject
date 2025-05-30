@@ -69,10 +69,42 @@
     </div>
   </nav>
 
-  <main class="">
-    <h1 class="text-3xl font-bold text-center !mt-10">Bem-vindo ao Configurações!</h1>
-  </main>
+<main class="bg-[#FDFDFE] h-screen flex flex-col items-end">
 
+  <div class="flex flex-col items-center justify-center w-full h-[80vh]">
+    <div class="flex flex-col items-center justify-center">
+      <h1 class="text-[#1A2B4C] text-[30px] font-medium mt-4">
+        Configurações
+      </h1>
+      
+      <form id="configUser" class="w-[800px]  bg-white shadow rounded-lg p-5 mt-10">
+        <div class="flex flex-col mt-5 w-full bg-white shadow rounded p-3">
+          <label for="nameUser" class="text-[#1A2B4C] font-medium text-[18px]">Nome</label>
+          <input id="nameUser" name="nameUser" type="text" placeholder="Digite seu nome" class="bg-[#F4F6F9] p-2 rounded" required/>
+        </div>
+        
+        <div class="flex flex-col mt-5 w-full bg-white shadow rounded p-3">
+          <label for="email" class="text-[#1A2B4C] font-medium text-[18px]">Email</label>
+          <input id="email" name="email" type="email" placeholder="Digite seu email" class="bg-[#F4F6F9] p-2 rounded" required/>
+        </div>
+        
+        <div class="flex flex-col mt-5 w-full bg-white shadow rounded p-3">
+          <label for="telefone" class="text-[#1A2B4C] font-medium text-[18px]">Telefone</label>
+          <input id="telefone" name="telefone" type="tel" placeholder="Digite seu telefone" class="bg-[#F4F6F9] p-2 rounded" required/>
+        </div>
+        
+        <div class="flex flex-col mt-5 w-full bg-white shadow rounded p-3">
+          <label for="password" class="text-[#1A2B4C] font-medium text-[18px]">Digite sua senha</label>
+          <input id="password" name="password" type="password" placeholder="Digite sua senha" class="bg-[#F4F6F9] p-2 rounded" required/>
+        </div>
+        
+        <button type="submit" class="bg-[#1A2B4C] text-white font-medium p-2 rounded w-[100px] mt-4">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+</main>
+  <script src="../static/scripts/configuracoes.js" defer></script>
   <script>lucide.createIcons();</script>
 </body>
 </html>

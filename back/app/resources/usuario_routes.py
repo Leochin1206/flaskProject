@@ -3,6 +3,7 @@ from app.models.usuario import Usuario
 from app.extensions import db
 from app import bcrypt
 from flask_jwt_extended import jwt_required
+from werkzeug.security import check_password_hash, generate_password_hash
 
 usuario_bp = Blueprint('usuario', __name__)
 
@@ -27,8 +28,8 @@ def get_usuario(id):
 @usuario_bp.route('/', methods=['POST'])
 def create_usuario():
     data = request.json
-    senha_plain = data.pop('senha')  # tira a senha do dict original
-    senha_hash = bcrypt.generate_password_hash(senha_plain).decode('utf-8')  # gera hash e decodifica para string
+    senha_plain = data.pop('senha')  
+    senha_hash = bcrypt.generate_password_hash(senha_plain).decode('utf-8')  
     u = Usuario(**data, senha=senha_hash)
     db.session.add(u)
     db.session.commit()
@@ -41,6 +42,8 @@ def update_usuario(id):
     data = request.json
     u = Usuario.query.get_or_404(id)
     for k, v in data.items():
+        if k == 'senha' and not v:
+            continue  
         setattr(u, k, v)
     db.session.commit()
     return jsonify({'msg': 'Usuário atualizado com sucesso'})

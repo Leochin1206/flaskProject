@@ -1,4 +1,4 @@
-document.getElementById('formTransacao').addEventListener('submit', async function (e) {
+document.getElementById('formMeta').addEventListener('submit', async function (e) {
   e.preventDefault();
 
   const formData = new FormData(this);
@@ -22,7 +22,7 @@ document.getElementById('formTransacao').addEventListener('submit', async functi
     }
 
 
-    const apiUrl = 'http://127.0.0.1:5000/transacao/post';
+    const apiUrl = 'http://127.0.0.1:5000/meta';
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -35,7 +35,7 @@ document.getElementById('formTransacao').addEventListener('submit', async functi
     const result = await response.json();
 
     if (response.ok) {
-      alert(result.msg || "Transação criada!");
+      alert(result.msg || "Meta criada!");
       this.reset();
       fecharModal();
     } else {
@@ -48,7 +48,7 @@ document.getElementById('formTransacao').addEventListener('submit', async functi
   }
 });
 
-const transacoesTipo = [
+const metaTipo = [
   { nome: "Alimentação", icone: "utensils", value: "alimentacao" },
   { nome: "Transporte", icone: "car", value: "transporte" },
   { nome: "Moradia", icone: "home", value: "moradia" },
@@ -67,9 +67,9 @@ const transacoesTipo = [
   { nome: "Outro", icone: "more-horizontal", value: "outro" }
 ];
 
-document.addEventListener('DOMContentLoaded', carregarTransacoes);
+document.addEventListener('DOMContentLoaded', carregarMeta);
 
-async function carregarTransacoes() {
+async function carregarMeta() {
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -78,7 +78,7 @@ async function carregarTransacoes() {
   }
 
   try {
-    const response = await fetch('http://127.0.0.1:5000/transacao/get', {
+    const response = await fetch('http://127.0.0.1:5000/meta', {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -89,11 +89,11 @@ async function carregarTransacoes() {
     console.log(data)
 
     if (response.ok) {
-      const ul = document.getElementById('listaTransacoes');
+      const ul = document.getElementById('listaMeta');
       ul.innerHTML = '';
 
       data.forEach(t => {
-        const tipoObj = transacoesTipo.find(tipo => tipo.value === t.categoria);
+        const tipoObj = metaTipo.find(tipo => tipo.value === t.categoria);
         const icone = tipoObj ? tipoObj.icone : "more-horizontal";
 
         const li = document.createElement('li');
@@ -111,7 +111,7 @@ async function carregarTransacoes() {
 
             <div class="flex justify-end gap-4 pt-2">
               <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
-              <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
+              <button class="text-sm text-red-600 hover:underline" onclick="deletarMeta(${t.id})">Excluir</button>
             </div>
           </div>
         `;
@@ -121,63 +121,61 @@ async function carregarTransacoes() {
 
       lucide.createIcons();
     } else {
-      alert("Erro ao carregar transações: " + (data.msg || data.error));
+      alert("Erro ao carregar Meta: " + (data.msg || data.error));
     }
   } catch (err) {
     console.error(err);
-    alert("Erro ao buscar transações.");
+    alert("Erro ao buscar Meta.");
   }
 }
 
 function abrirModalEdicao(id) {
   const token = localStorage.getItem("token");
 
-  fetch(`http://127.0.0.1:5000/transacao/${id}`, {
+  fetch(`http://127.0.0.1:5000/meta/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
     .then(res => res.json())
     .then(dados => {
-      document.querySelector('#modalTransacaoEdit input[name="tipo"][value="' + dados.tipo + '"]').checked = true;
-      document.querySelector('#modalTransacaoEdit #valor').value = dados.valor;
-      document.querySelector('#modalTransacaoEdit #categoria').value = dados.categoria;
+      document.querySelector('#modalMetaEdit input[name="tipo"][value="' + dados.tipo + '"]').checked = true;
+      document.querySelector('#modalMetaEdit #valor').value = dados.valor;
+      document.querySelector('#modalMetaEdit #categoria').value = dados.categoria;
 
       const dataObj = new Date(dados.data);
       const dataFormatada = dataObj.toISOString().split("T")[0];
-      document.querySelector('#modalTransacaoEdit #data').value = dataFormatada;
+      document.querySelector('#modalMetaEdit #data').value = dataFormatada;
 
-      document.querySelector('#modalTransacaoEdit #descricao').value = dados.descricao;
+      document.querySelector('#modalMetaEdit #descricao').value = dados.descricao;
 
-      document.getElementById('formTransacaoEdit').setAttribute('data-id', id);
-      document.getElementById('modalTransacaoEdit').classList.remove('hidden');
+      document.getElementById('formMetaEdit').setAttribute('data-id', id);
+      document.getElementById('modalMetaEdit').classList.remove('hidden');
     })
-    .catch(error => console.error('Erro ao buscar transação para edição:', error));
+    .catch(error => console.error('Erro ao buscar Meta para edição:', error));
 }
 
 
-document.getElementById("formTransacaoEdit").addEventListener("submit", function (e) {
+document.getElementById("formMetaEdit").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const id = e.target.getAttribute("data-id");
   const token = localStorage.getItem("token");
 
-  const tipo = document.querySelector('#modalTransacaoEdit input[name="tipo"]:checked')?.value || "";
-  const valorRaw = document.querySelector('#modalTransacaoEdit #valor').value.trim();
+  const tipo = document.querySelector('#modalMetaEdit input[name="tipo"]:checked')?.value || "";
+  const valorRaw = document.querySelector('#modalMetaEdit #valor').value.trim();
   const valor = parseFloat(valorRaw.replace(",", "."));
-  const categoria = document.querySelector('#modalTransacaoEdit #categoria').value.trim();
-  const data = document.querySelector('#modalTransacaoEdit #data').value;
-  const descricao = document.querySelector('#modalTransacaoEdit #descricao').value.trim();
+  const categoria = document.querySelector('#modalMetaEdit #categoria').value.trim();
+  const data = document.querySelector('#modalMetaEdit #data').value;
+  const descricao = document.querySelector('#modalMetaEdit #descricao').value.trim();
 
-
-  // Validação mínima dos campos
   if (!tipo || isNaN(valor) || !data) {
     console.error("Preencha todos os campos obrigatórios corretamente.");
     alert("Preencha todos os campos obrigatórios (tipo, valor numérico e data).");
     return;
   }
 
-  const transacaoAtualizada = {
+  const metaAtualizada = {
     tipo,
     valor,
     categoria,
@@ -185,13 +183,13 @@ document.getElementById("formTransacaoEdit").addEventListener("submit", function
     descricao,
   };
 
-  fetch(`http://127.0.0.1:5000/transacao/${id}`, {
+  fetch(`http://127.0.0.1:5000/meta/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify(transacaoAtualizada)
+    body: JSON.stringify(metaAtualizada)
   })
     .then(res => {
       if (!res.ok) {
@@ -200,24 +198,24 @@ document.getElementById("formTransacaoEdit").addEventListener("submit", function
       return res.json();
     })
     .then(data => {
-      console.log("Transação atualizada:", data);
+      console.log("Meta atualizada:", data);
 
-      document.getElementById("modalTransacaoEdit").classList.add("hidden");
-      carregarTransacoes();
+      document.getElementById("modalMetaEdit").classList.add("hidden");
+      carregarMeta();
     })
     .catch(error => {
-      console.error("Erro ao atualizar transação:", error);
+      console.error("Erro ao atualizar Meta:", error);
     });
 });
 
-async function deletarTransacao(id) {
-  const confirmar = confirm("Tem certeza que deseja excluir esta transação?");
+async function deletarMeta(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir esta Meta?");
   if (!confirmar) return;
 
   const token = localStorage.getItem('token');
 
   try {
-    const response = await fetch(`http://127.0.0.1:5000/transacao/${id}`, {
+    const response = await fetch(`http://127.0.0.1:5000/meta/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -227,25 +225,25 @@ async function deletarTransacao(id) {
     const result = await response.json();
 
     if (response.ok) {
-      alert(result.msg || "Transação deletada com sucesso!");
+      alert(result.msg || "Meta deletada com sucesso!");
       carregarTransacoes();
     } else {
-      alert("Erro ao deletar transação: " + (result.msg || result.error));
+      alert("Erro ao deletar Meta: " + (result.msg || result.error));
     }
   } catch (err) {
     console.error(err);
-    alert("Erro ao tentar deletar transação.");
+    alert("Erro ao tentar deletar Meta.");
   }
 }
 
 function abrirModal() {
-  document.getElementById('modalTransacao').classList.remove('hidden');
+  document.getElementById('modalMeta').classList.remove('hidden');
 }
 
 function fecharModal() {
-  document.getElementById('modalTransacao').classList.add('hidden');
+  document.getElementById('modalMeta').classList.add('hidden');
 }
 
 function fecharModalEdit() {
-  document.getElementById('modalTransacaoEdit').classList.add('hidden');
+  document.getElementById('modalMetaEdit').classList.add('hidden');
 }
