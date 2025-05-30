@@ -6,11 +6,11 @@ document.getElementById('formMeta').addEventListener('submit', async function (e
     nome: formData.get('nome'),
     descricao: formData.get('descricao'),
     categoria: formData.get('categoria'),
+    valor_atual: parseFloat(formData.get('valor_atual')),
     valor_objetivo: parseFloat(formData.get('valor_objetivo')),
-    data_limite: formData.get('data_limite') || "2025-12-31", 
-    data_criacao: new Date().toISOString().split('T')[0], 
+    data_limite: formData.get('data_limite') || "2025-12-31",
+    data_criacao: new Date().toISOString().split('T')[0],
     id_usuario: 1,
-    id_transacao: 1
   };
 
   console.log("Enviando dados:", jsonData);
@@ -88,15 +88,26 @@ async function carregarMeta() {
     });
 
     const data = await response.json();
-    console.log(data)
+    console.log(data);
 
     if (response.ok) {
       const ul = document.getElementById('listaMeta');
-      ul.innerHTML = '';
+      ul.innerHTML = ''; 
 
       data.forEach(t => {
         const tipoObj = metaTipo.find(tipo => tipo.value === t.categoria);
-        const icone = tipoObj ? tipoObj.icone : "more-horizontal";
+        const icone = tipoObj ? tipoObj.icone : "more-horizontal"; 
+        const valorAtual = (typeof t.valor_atual === "number" && !isNaN(t.valor_atual)) ? t.valor_atual : 0;
+        const valorObjetivo = (typeof t.valor_objetivo === "number" && !isNaN(t.valor_objetivo)) ? t.valor_objetivo : 0;
+        const valorAtualFormatado = valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        const valorObjetivoFormatado = valorObjetivo.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+        let percentualProgresso = 0;
+        if (valorObjetivo > 0) { 
+          percentualProgresso = (valorAtual / valorObjetivo) * 100;
+        }
+
+        percentualProgresso = Math.min(Math.max(percentualProgresso, 0), 100);
 
         const li = document.createElement('li');
         li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
@@ -105,12 +116,19 @@ async function carregarMeta() {
           <div class="absolute top-4 right-4 text-blue-600 w-10 h-10" data-lucide="${icone}"></div>
 
           <div class="w-full space-y-2">
-            <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
-            <div class="text-green-600 font-bold"><span class="font-semibold">Valor:</span> R$${(typeof t.valor === "number" && !isNaN(t.valor)) ? t.valor.toFixed(2) : "0.00"}</div>
+            <div><span class="font-semibold">Nome da meta:</span> ${t.nome}</div>
+            <div><span class="font-semibold">Descrição:</span> ${t.descricao || ''}</div>
             <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
-            <div><span class="font-semibold">Data:</span> ${new Date(t.data).toLocaleDateString("pt-BR")}</div>
-            <div><span class="font-semibold">Descrição:</span> ${t.descricao}</div>
+            <div><span class="font-semibold">Data Limite:</span> ${new Date(t.data_limite).toLocaleDateString("pt-BR")}</div>
 
+            <div class="progress-section mt-3">
+              <div class="text-sm text-gray-700 mb-1">
+                R$ ${valorAtualFormatado} de R$ ${valorObjetivoFormatado}
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${percentualProgresso}%"></div>
+              </div>
+            </div>
             <div class="flex justify-end gap-4 pt-2">
               <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
               <button class="text-sm text-red-600 hover:underline" onclick="deletarMeta(${t.id})">Excluir</button>
@@ -121,13 +139,16 @@ async function carregarMeta() {
         ul.appendChild(li);
       });
 
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+        lucide.createIcons(); 
+      }
+
     } else {
-      alert("Erro ao carregar Meta: " + (data.msg || data.error));
+      alert("Erro ao carregar Metas: " + (data.message || data.error || "Erro desconhecido"));
     }
   } catch (err) {
-    console.error(err);
-    alert("Erro ao buscar Meta.");
+    console.error("Erro na função carregarMeta:", err);
+    alert("Erro ao buscar Metas. Verifique o console para mais detalhes.");
   }
 }
 
@@ -139,50 +160,65 @@ function abrirModalEdicao(id) {
       Authorization: `Bearer ${token}`
     }
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Erro ao buscar meta: ${res.status}`);
+      }
+      return res.json();
+    })
     .then(dados => {
-      document.querySelector('#modalMetaEdit input[name="tipo"][value="' + dados.tipo + '"]').checked = true;
-      document.querySelector('#modalMetaEdit #valor').value = dados.valor;
-      document.querySelector('#modalMetaEdit #categoria').value = dados.categoria;
+      document.querySelector('#modalMetaEdit #nome').value = dados.nome || "";
+      document.querySelector('#modalMetaEdit #valor_atual').value = dados.valor_atual !== undefined ? dados.valor_atual : (dados.valor || "");
+      document.querySelector('#modalMetaEdit #valor_objetivo').value = dados.valor_objetivo !== undefined ? dados.valor_objetivo : (dados.valor || "");
+      document.querySelector('#modalMetaEdit #categoria').value = dados.categoria || "";
 
-      const dataObj = new Date(dados.data);
-      const dataFormatada = dataObj.toISOString().split("T")[0];
-      document.querySelector('#modalMetaEdit #data').value = dataFormatada;
+      const dataParaFormatar = dados.data_limite || dados.data;
+      if (dataParaFormatar) {
+        const dataObj = new Date(dataParaFormatar);
+        if (!isNaN(dataObj.getTime())) {
+            const dataFormatada = dataObj.toISOString().split("T")[0];
+            document.querySelector('#modalMetaEdit #data_limite').value = dataFormatada;
+        } else {
+            document.querySelector('#modalMetaEdit #data_limite').value = "";
+            console.warn("Data recebida do backend é inválida:", dataParaFormatar);
+        }
+      } else {
+        document.querySelector('#modalMetaEdit #data_limite').value = "";
+      }
 
-      document.querySelector('#modalMetaEdit #descricao').value = dados.descricao;
-
+      document.querySelector('#modalMetaEdit #descricao').value = dados.descricao || "";
       document.getElementById('formMetaEdit').setAttribute('data-id', id);
       document.getElementById('modalMetaEdit').classList.remove('hidden');
     })
     .catch(error => console.error('Erro ao buscar Meta para edição:', error));
 }
 
-
 document.getElementById("formMetaEdit").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const id = e.target.getAttribute("data-id");
   const token = localStorage.getItem("token");
-
-  const tipo = document.querySelector('#modalMetaEdit input[name="tipo"]:checked')?.value || "";
-  const valorRaw = document.querySelector('#modalMetaEdit #valor').value.trim();
-  const valor = parseFloat(valorRaw.replace(",", "."));
+  const nome = document.querySelector('#modalMetaEdit #nome').value.trim();
+  const valorObjetivoRaw = document.querySelector('#modalMetaEdit #valor_objetivo').value.trim();
+  const valorAtual = parseFloat(valorObjetivoRaw.replace(",", "."));
+  const valorObjetivo = parseFloat(valorObjetivoRaw.replace(",", "."));
   const categoria = document.querySelector('#modalMetaEdit #categoria').value.trim();
-  const data = document.querySelector('#modalMetaEdit #data').value;
+  const dataLimite = document.querySelector('#modalMetaEdit #data_limite').value;
   const descricao = document.querySelector('#modalMetaEdit #descricao').value.trim();
 
-  if (!tipo || isNaN(valor) || !data) {
-    console.error("Preencha todos os campos obrigatórios corretamente.");
-    alert("Preencha todos os campos obrigatórios (tipo, valor numérico e data).");
+  if (!nome || isNaN(valorObjetivo) || isNaN(valorAtual) || !dataLimite || !categoria) {
+    console.error("Preencha todos os campos obrigatórios corretamente. (Validação JS falhou)");
+    alert("Preencha todos os campos obrigatórios (Nome, Valor Objetivo numérico, Categoria e Data Limite).");
     return;
   }
 
   const metaAtualizada = {
-    tipo,
-    valor,
-    categoria,
-    data,
-    descricao,
+    nome: nome,
+    valor_atual: valorAtual,
+    valor_objetivo: valorObjetivo,
+    categoria: categoria,
+    data_limite: dataLimite,
+    descricao: descricao,
   };
 
   fetch(`http://127.0.0.1:5000/meta/${id}`, {
@@ -195,18 +231,26 @@ document.getElementById("formMetaEdit").addEventListener("submit", function (e) 
   })
     .then(res => {
       if (!res.ok) {
-        throw new Error(`Erro ${res.status}: ${res.statusText}`);
+        return res.json().then(errData => {
+            throw new Error(`Erro ${res.status}: ${res.statusText} - ${errData.message || JSON.stringify(errData)}`);
+        }).catch(() => {
+            throw new Error(`Erro ${res.status}: ${res.statusText}`);
+        });
       }
       return res.json();
     })
     .then(data => {
       console.log("Meta atualizada:", data);
-
       document.getElementById("modalMetaEdit").classList.add("hidden");
-      carregarMeta();
+      if (typeof carregarMeta === "function") {
+          carregarMeta();
+      } else {
+          console.warn("Função carregarMeta() não definida. A lista de metas pode não ser atualizada automaticamente.");
+      }
     })
     .catch(error => {
       console.error("Erro ao atualizar Meta:", error);
+      alert(`Erro ao atualizar Meta: ${error.message}`);
     });
 });
 
@@ -228,7 +272,7 @@ async function deletarMeta(id) {
 
     if (response.ok) {
       alert(result.msg || "Meta deletada com sucesso!");
-      carregarTransacoes();
+      carregarMeta();
     } else {
       alert("Erro ao deletar Meta: " + (result.msg || result.error));
     }

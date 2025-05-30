@@ -43,17 +43,9 @@ def create_app():
     def transacoes_page():
         return render_template('transacoes.html')
 
-    @app.route('/orcamentos')
-    def orcamentos_page():
-        return render_template('orcamentos.html')
-
     @app.route('/metas')
     def metas_page():
         return render_template('metas.html')
-
-    @app.route('/relatorios')
-    def relatorios_page():
-        return render_template('relatorios.html')
 
     @app.route('/configuracoes')
     def configuracoes_page():

@@ -31,24 +31,10 @@
         </div>
       </a>
 
-      <a href="/orcamentos">
-        <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
-          <i data-lucide="file-text" class="w-6 h-6"></i>
-          <h1 class="text-[14px] font-medium">Orçamentos</h1>
-        </div>
-      </a>
-
       <a href="/metas">
         <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
           <i data-lucide="target" class="w-6 h-6"></i>
           <h1 class="text-[14px] font-medium">Metas</h1>
-        </div>
-      </a>
-
-      <a href="/relatorios">
-        <div class="flex flex-col items-center justify-center hover:scale-110 transition-all">
-          <i data-lucide="flag" class="w-6 h-6"></i>
-          <h1 class="text-[14px] font-medium">Relatórios</h1>
         </div>
       </a>
 
@@ -70,6 +56,8 @@
   </nav>
 
   <main class="flex flex-col items-center justify-center">
+    <h1 class="text-[#1A2B4C] text-[30px] font-medium !mt-4 w-full text-center">Suas Metas</h1>
+
     <div class="w-[80%] sm:w-[40%] !mt-4">
       <button onclick="abrirModal()" class="bg-blue-600 text-white rounded w-full p-3 mb-5">+ Nova Meta</button>
     </div>
@@ -116,6 +104,15 @@
           </div>
 
           <div>
+            <label for="valor_atual" class="block text-[#1A2B4C] font-bold mb-1">Valor Atual:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor_atual" id="valor_atual" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+          </div>
+
+          <div>
             <label for="valor_objetivo" class="block text-[#1A2B4C] font-bold mb-1">Valor objetivo:</label>
             <div class="relative">
               <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
@@ -145,31 +142,19 @@
 
     <div id="modalMetaEdit" class="fixed inset-0 hidden flex items-center justify-center bg-black bg-opacity-30 z-50">
       <div class="bg-white rounded-lg p-6 w-[90%] max-w-[800px] shadow-lg">
-        <h1 class="text-2xl text-[#1A2B4C] font-semibold">Editar Meta</h1>
+        <h1 class="text-2xl text-[#1A2B4C] font-semibold">Nova Meta</h1>
         <form id="formMetaEdit" class="mt-4 space-y-4">
 
           <div>
-            <label class="block text-[#1A2B4C] font-bold mb-1">Tipo:</label>
-            <div class="flex gap-5">
-              <label class="flex items-center gap-2">
-                <input type="radio" name="tipo" value="entrada" required />
-                Entrada
-              </label>
-              <label class="flex items-center gap-2">
-                <input type="radio" name="tipo" value="saida" />
-                Saída
-              </label>
-            </div>
+            <label for="nome" class="block text-[#1A2B4C] font-bold mb-1">Nome:</label>
+            <input type="text" name="nome" id="nome" placeholder="nome..." required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
           </div>
 
-
           <div>
-            <label for="valor" class="block text-[#1A2B4C] font-bold mb-1">Valor:</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
-              <input type="number" name="valor" id="valor" placeholder="0,00" required
-                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
+            <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
+            <input type="text" name="descricao" id="descricao" placeholder="descrição..." required
+              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
           </div>
 
           <div>
@@ -196,26 +181,37 @@
             </select>
           </div>
 
-
           <div>
-            <label for="data" class="block text-[#1A2B4C] font-bold mb-1">Data:</label>
-            <input type="date" name="data" id="data" required
-              class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
+            <label for="valor_atual" class="block text-[#1A2B4C] font-bold mb-1">Valor Atual:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor_atual" id="valor_atual" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
           </div>
 
           <div>
-            <label for="descricao" class="block text-[#1A2B4C] font-bold mb-1">Descrição:</label>
-            <input type="text" name="descricao" id="descricao" placeholder="nome..." required
+            <label for="valor_objetivo" class="block text-[#1A2B4C] font-bold mb-1">Valor objetivo:</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+              <input type="number" name="valor_objetivo" id="valor_objetivo" placeholder="0,00" required
+                class="pl-10 p-2 border border-gray-300 w-full rounded shadow text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+          </div>
+
+          <div>
+            <label for="data_limite" class="block text-[#1A2B4C] font-bold mb-1">Data limite:</label>
+            <input type="date" name="data_limite" id="data_limite" required
               class="p-2 border border-gray-300 w-full rounded shadow text-gray-700" />
           </div>
 
           <div class="flex justify-end gap-4 pt-4">
-            <button type="button" onclick="fecharModalEdit()"
+            <button type="button" onclick="fecharModal()"
               class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
               Cancelar
             </button>
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
-              Atualizar
+              Adicionar
             </button>
           </div>
         </form>
