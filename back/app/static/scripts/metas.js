@@ -92,18 +92,18 @@ async function carregarMeta() {
 
     if (response.ok) {
       const ul = document.getElementById('listaMeta');
-      ul.innerHTML = ''; 
+      ul.innerHTML = '';
 
       data.forEach(t => {
         const tipoObj = metaTipo.find(tipo => tipo.value === t.categoria);
-        const icone = tipoObj ? tipoObj.icone : "more-horizontal"; 
+        const icone = tipoObj ? tipoObj.icone : "more-horizontal";
         const valorAtual = (typeof t.valor_atual === "number" && !isNaN(t.valor_atual)) ? t.valor_atual : 0;
         const valorObjetivo = (typeof t.valor_objetivo === "number" && !isNaN(t.valor_objetivo)) ? t.valor_objetivo : 0;
         const valorAtualFormatado = valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         const valorObjetivoFormatado = valorObjetivo.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
         let percentualProgresso = 0;
-        if (valorObjetivo > 0) { 
+        if (valorObjetivo > 0) {
           percentualProgresso = (valorAtual / valorObjetivo) * 100;
         }
 
@@ -140,7 +140,7 @@ async function carregarMeta() {
       });
 
       if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-        lucide.createIcons(); 
+        lucide.createIcons();
       }
 
     } else {
@@ -176,11 +176,11 @@ function abrirModalEdicao(id) {
       if (dataParaFormatar) {
         const dataObj = new Date(dataParaFormatar);
         if (!isNaN(dataObj.getTime())) {
-            const dataFormatada = dataObj.toISOString().split("T")[0];
-            document.querySelector('#modalMetaEdit #data_limite').value = dataFormatada;
+          const dataFormatada = dataObj.toISOString().split("T")[0];
+          document.querySelector('#modalMetaEdit #data_limite').value = dataFormatada;
         } else {
-            document.querySelector('#modalMetaEdit #data_limite').value = "";
-            console.warn("Data recebida do backend é inválida:", dataParaFormatar);
+          document.querySelector('#modalMetaEdit #data_limite').value = "";
+          console.warn("Data recebida do backend é inválida:", dataParaFormatar);
         }
       } else {
         document.querySelector('#modalMetaEdit #data_limite').value = "";
@@ -199,9 +199,13 @@ document.getElementById("formMetaEdit").addEventListener("submit", function (e) 
   const id = e.target.getAttribute("data-id");
   const token = localStorage.getItem("token");
   const nome = document.querySelector('#modalMetaEdit #nome').value.trim();
+
+  const valorAtualRaw = document.querySelector('#modalMetaEdit #valor_atual').value.trim();
+  const valorAtual = parseFloat(valorAtualRaw.replace(",", "."));
+
   const valorObjetivoRaw = document.querySelector('#modalMetaEdit #valor_objetivo').value.trim();
-  const valorAtual = parseFloat(valorObjetivoRaw.replace(",", "."));
   const valorObjetivo = parseFloat(valorObjetivoRaw.replace(",", "."));
+
   const categoria = document.querySelector('#modalMetaEdit #categoria').value.trim();
   const dataLimite = document.querySelector('#modalMetaEdit #data_limite').value;
   const descricao = document.querySelector('#modalMetaEdit #descricao').value.trim();
@@ -232,9 +236,9 @@ document.getElementById("formMetaEdit").addEventListener("submit", function (e) 
     .then(res => {
       if (!res.ok) {
         return res.json().then(errData => {
-            throw new Error(`Erro ${res.status}: ${res.statusText} - ${errData.message || JSON.stringify(errData)}`);
+          throw new Error(`Erro ${res.status}: ${res.statusText} - ${errData.message || JSON.stringify(errData)}`);
         }).catch(() => {
-            throw new Error(`Erro ${res.status}: ${res.statusText}`);
+          throw new Error(`Erro ${res.status}: ${res.statusText}`);
         });
       }
       return res.json();
@@ -243,9 +247,9 @@ document.getElementById("formMetaEdit").addEventListener("submit", function (e) 
       console.log("Meta atualizada:", data);
       document.getElementById("modalMetaEdit").classList.add("hidden");
       if (typeof carregarMeta === "function") {
-          carregarMeta();
+        carregarMeta();
       } else {
-          console.warn("Função carregarMeta() não definida. A lista de metas pode não ser atualizada automaticamente.");
+        console.warn("Função carregarMeta() não definida. A lista de metas pode não ser atualizada automaticamente.");
       }
     })
     .catch(error => {

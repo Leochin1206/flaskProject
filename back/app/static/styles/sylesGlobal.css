@@ -1,4 +1,8 @@
 .filter-button.active {
-  background-color: #3B82F6; 
+  background-color: #3B82F6;
   color: white;
+}
+
+.chart-bar {
+  transition: height 0.3s ease-in-out;
 }
