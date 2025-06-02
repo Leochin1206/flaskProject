@@ -16,35 +16,28 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     async function fetchData() {
+        const token = localStorage.getItem('token'); 
 
-
-        // 1. Pega o token do localStorage.
-        const token = localStorage.getItem('token'); // IMPORTANTE: Use a mesma chave que você usou para salvar o token no login!
-
-        // 2. Verifica se o token existe. Se não, redireciona para o login.
         if (!token) {
             console.error("Token de autenticação não encontrado. Redirecionando para login.");
-            // Redireciona para a página de login, que no seu caso parece ser a raiz.
             window.location.href = '/'; 
-            return; // Para a execução da função
+            return; 
         }
 
         try {
-            // 3. Adiciona o token no cabeçalho da requisição
             const response = await fetch(API_URL, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Envia o token para a API
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
 
             if (!response.ok) {
-                // Se a resposta for 401 (token inválido/expirado) ou outro erro, redireciona para o login.
                 if (response.status === 401) {
                     console.error("Token inválido ou expirado. Redirecionando para login.");
-                    localStorage.removeItem('authToken'); // Limpa o token antigo
+                    localStorage.removeItem('authToken'); 
                     window.location.href = '/';
                     return;
                 }
@@ -74,10 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${day}/${month}/${year}`;
     }
 
-    // A função updateDashboard continua exatamente a mesma, não precisa de alterações.
     function updateDashboard(transactions) {
-        // ... (todo o resto do seu código que atualiza o dashboard) ...
-        // Se não houver transações, exibe mensagens de "vazio" e para a execução
         if (!transactions || transactions.length === 0) {
             loadingIndicatorEl.classList.add('hidden');
             dashboardContentEl.classList.remove('hidden');
@@ -90,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 1. Calcula o Saldo Total
         let balance = 0;
         transactions.forEach(t => {
             if (t.tipo === 'entrada') {
@@ -101,8 +90,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         totalBalanceEl.textContent = formatCurrency(balance);
         totalBalanceEl.className = `text-3xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`;
-
-        // 2. Calcula Entradas e Saídas do Mês Atual
         const now = new Date();
         const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
@@ -121,8 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         totalIncomeMonthEl.textContent = formatCurrency(monthlyIncome);
         totalExpenseMonthEl.textContent = formatCurrency(monthlyExpense);
-
-        // 3. Exibe as Últimas 10 Transações Recentes
         const sortedTransactions = transactions.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
         const recentTransactions = sortedTransactions.slice(0, 10);
 
@@ -147,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
             recentTransactionsBodyEl.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Nenhuma transação recente.</td></tr>';
         }
 
-        // 4. Cria o Resumo por Categoria
         const categoryMap = {};
         transactions.forEach(t => {
             const value = parseFloat(t.valor);
@@ -186,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             categorySummaryEl.innerHTML = '<p class="text-gray-500">Nenhuma categoria para exibir.</p>';
         }
 
-        // 5. Gera o Gráfico de Entradas e Saídas por Mês
         const monthlyData = {};
         transactions.forEach(t => {
             const date = new Date(t.data);
@@ -233,14 +216,12 @@ document.addEventListener('DOMContentLoaded', function () {
             transactionsChartContainerEl.innerHTML = '<p class="m-auto text-gray-500">Sem dados suficientes para o gráfico mensal.</p>';
         }
 
-        // Esconde o indicador de carregamento e mostra o conteúdo do dashboard
         loadingIndicatorEl.classList.add('hidden');
         dashboardContentEl.classList.remove('hidden');
     }
 
     async function init() {
         const transactions = await fetchData();
-        // A função só continuará se fetchData retornar transações (e não redirecionar)
         if (transactions) {
             updateDashboard(transactions);
         }

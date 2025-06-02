@@ -70,95 +70,181 @@ const transacoesTipo = [
 document.addEventListener('DOMContentLoaded', carregarTransacoes);
 
 async function carregarTransacoes(startDate, endDate) {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  if (!token) {
-    alert("Token não encontrado. Faça login.");
-    return;
-  }
+    if (!token) {
+        alert("Token não encontrado. Faça login.");
+        return;
+    }
 
-  let url = 'http://127.0.0.1:5000/transacao/get';
-  const params = new URLSearchParams();
+    let url = 'http://127.0.0.1:5000/transacao/get';
+    const params = new URLSearchParams();
 
-  if (startDate) {
-    params.append('startDate', startDate.toISOString());
-  }
-  if (endDate) {
-    params.append('endDate', endDate.toISOString());
-  }
+    if (startDate) {
+        params.append('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+        params.append('endDate', endDate.toISOString());
+    }
 
-  const queryString = params.toString();
-  if (queryString) {
-    url += `?${queryString}`;
-  }
+    const queryString = params.toString();
+    if (queryString) {
+        url += `?${queryString}`;
+    }
 
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    });
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
 
-    const data = await response.json();
-    console.log('Dados recebidos para o filtro:', data); 
+        const data = await response.json();
+        console.log('Dados recebidos para o filtro:', data);
 
-    if (response.ok) {
-      const ul = document.getElementById('listaTransacoes');
-      ul.innerHTML = ''; 
+        if (response.ok) {
+            const ul = document.getElementById('listaTransacoes');
+            ul.innerHTML = '';
 
-      data.forEach(t => {
-        const tipoObj = transacoesTipo.find(tipo => tipo.value === t.categoria);
-        const icone = tipoObj ? tipoObj.icone : "more-horizontal";
+            data.forEach(t => {
+                const tipoObj = transacoesTipo.find(tipo => tipo.value === t.categoria);
+                const icone = tipoObj ? tipoObj.icone : "more-horizontal";
 
-        const valorTransacao = (typeof t.valor === "number" && !isNaN(t.valor)) ? t.valor : 0;
-        let valorDivColorClass = 'text-gray-700';
-        let iconColorClass = 'text-gray-500';
+                const valorTransacao = (typeof t.valor === "number" && !isNaN(t.valor)) ? t.valor : 0;
+                let valorDivColorClass = 'text-gray-700';
+                let iconColorClass = 'text-gray-500';
 
-        if (valorTransacao > 0) {
-          valorDivColorClass = 'text-green-600';
-          iconColorClass = 'text-green-600';
-        } else if (valorTransacao < 0) {
-          valorDivColorClass = 'text-red-600';
-          iconColorClass = 'text-red-600';
+                if (valorTransacao > 0) {
+                    valorDivColorClass = 'text-green-600';
+                    iconColorClass = 'text-green-600';
+                } else if (valorTransacao < 0) {
+                    valorDivColorClass = 'text-red-600';
+                    iconColorClass = 'text-red-600';
+                }
+                const valorDisplay = valorTransacao.toFixed(2).replace('.', ',');
+                let dataExibicao;
+                if (t.data && typeof t.data === 'string') { 
+                    const dataStringApenasData = t.data.substring(0, 10);
+                    const partesData = dataStringApenasData.split('-');
+
+                    if (partesData.length === 3) {
+                        const ano = parseInt(partesData[0], 10);
+                        const mes = parseInt(partesData[1], 10) - 1; 
+                        const dia = parseInt(partesData[2], 10);
+
+                        // Validação básica das partes
+                        if (!isNaN(ano) && !isNaN(mes) && !isNaN(dia)) {
+                            const dataLocal = new Date(ano, mes, dia);
+                            dataExibicao = dataLocal.toLocaleDateString("pt-BR", { timeZone: 'America/Sao_Paulo' });
+                        } else {
+                            dataExibicao = "Data inválida (partes)"; 
+                        }
+                    } else {
+                        console.warn(`Formato de data inesperado para t.data: ${t.data}. Usando fallback.`);
+                        const dataFallback = new Date(t.data); 
+                        dataExibicao = dataFallback.isValid() ? dataFallback.toLocaleDateString("pt-BR") : "Data inválida (fallback)";
+                    }
+                } else {
+                    dataExibicao = "Data não fornecida";
+                }
+
+                const li = document.createElement('li');
+                li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
+                li.innerHTML = `
+                    <div class="absolute top-4 right-4 ${iconColorClass} w-10 h-10" data-lucide="${icone}"></div>
+                    <div class="w-full space-y-2">
+                        <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
+                        <div class="${valorDivColorClass} font-bold">
+                            <span class="font-semibold">Valor:</span> R$${valorDisplay}
+                        </div>
+                        <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
+                        <div><span class="font-semibold">Data:</span> ${dataExibicao}</div> 
+                        <div><span class="font-semibold">Descrição:</span> ${t.descricao || ''}</div>
+                        <div class="flex justify-end gap-4 pt-2">
+                            <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
+                            <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
+                        </div>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+
+            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            } else {
+                console.warn('Lucide icons não foram carregados ou a função createIcons não está disponível.');
+            }
+
+        } else {
+            alert("Erro ao carregar transações: " + (data.message || data.error || "Erro desconhecido"));
         }
-        const valorDisplay = valorTransacao.toFixed(2).replace('.', ',');
+    } catch (err) {
+        console.error("Erro na função carregarTransacoes com filtro:", err);
+        alert("Erro ao buscar transações filtradas. Verifique o console para mais detalhes.");
+    }
+}
 
-        const li = document.createElement('li');
-        li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
-        li.innerHTML = `
-          <div class="absolute top-4 right-4 ${iconColorClass} w-10 h-10" data-lucide="${icone}"></div>
-          <div class="w-full space-y-2">
-            <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
-            <div class="${valorDivColorClass} font-bold">
-              <span class="font-semibold">Valor:</span> R$${valorDisplay}
-            </div>
-            <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
-            <div><span class="font-semibold">Data:</span> ${new Date(t.data).toLocaleDateString("pt-BR")}</div>
-            <div><span class="font-semibold">Descrição:</span> ${t.descricao || ''}</div>
-            <div class="flex justify-end gap-4 pt-2">
-              <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
-              <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
-            </div>
-          </div>
-        `;
-        ul.appendChild(li);
-      });
+document.addEventListener('DOMContentLoaded', () => {
+    const btnHoje = document.getElementById('filterHoje');
+    const btnSemana = document.getElementById('filterSemana');
+    const btnMes = document.getElementById('filterMes');
+    const btnTodas = document.getElementById('filterTodas');
 
-      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-        lucide.createIcons();
-      } else {
-        console.warn('Lucide icons não foram carregados ou a função createIcons não está disponível.');
-      }
+    if (btnHoje && btnSemana && btnMes && btnTodas) {
+        filterButtons.push(btnHoje, btnSemana, btnMes, btnTodas);
+
+        btnHoje.addEventListener('click', () => {
+            const today = new Date();
+            const startDate = getStartOfDay(today);
+            const endDate = getEndOfDay(today);
+            console.log('Filtrando por Hoje:', startDate.toISOString(), endDate.toISOString());
+            carregarTransacoes(startDate, endDate);
+            setActiveButton('filterHoje');
+        });
+
+        btnSemana.addEventListener('click', () => {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() + diffToMonday);
+            const startDate = getStartOfDay(startOfWeek);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            const endDate = getEndOfDay(endOfWeek);
+
+            console.log('Filtrando por Semana:', startDate.toISOString(), endDate.toISOString());
+            carregarTransacoes(startDate, endDate);
+            setActiveButton('filterSemana');
+        });
+
+        btnMes.addEventListener('click', () => {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const startDate = getStartOfDay(new Date(year, month, 1));
+            const endDate = getEndOfDay(new Date(year, month + 1, 0));
+
+            console.log('Filtrando por Mês:', startDate.toISOString(), endDate.toISOString());
+            carregarTransacoes(startDate, endDate);
+            setActiveButton('filterMes');
+        });
+
+        btnTodas.addEventListener('click', () => {
+            console.log('Listando todas as transações');
+            carregarTransacoes(); 
+            setActiveButton('filterTodas');
+        });
+
+        if (btnHoje) { 
+            btnHoje.click();
+        }
 
     } else {
-      alert("Erro ao carregar transações: " + (data.message || data.error || "Erro desconhecido"));
+        console.error("Um ou mais botões de filtro não foram encontrados. Verifique os IDs no HTML: filterHoje, filterSemana, filterMes, filterTodas.");
     }
-  } catch (err) {
-    console.error("Erro na função carregarTransacoes com filtro:", err);
-    alert("Erro ao buscar transações filtradas. Verifique o console para mais detalhes.");
-  }
-}
+});
 
 function getStartOfDay(date) {
   const newDate = new Date(date);
@@ -185,60 +271,6 @@ function setActiveButton(activeBtnId) {
     }
   });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  const btnHoje = document.getElementById('filterHoje');
-  const btnSemana = document.getElementById('filterSemana');
-  const btnMes = document.getElementById('filterMes');
-
-  if (btnHoje && btnSemana && btnMes) {
-    filterButtons.push(btnHoje, btnSemana, btnMes); 
-
-    btnHoje.addEventListener('click', () => {
-      const today = new Date();
-      const startDate = getStartOfDay(today);
-      const endDate = getEndOfDay(today);
-      console.log('Filtrando por Hoje:', startDate.toISOString(), endDate.toISOString());
-      carregarTransacoes(startDate, endDate);
-      setActiveButton('filterHoje');
-    });
-
-    btnSemana.addEventListener('click', () => {
-      const today = new Date();
-      const dayOfWeek = today.getDay(); 
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() + diffToMonday);
-      const startDate = getStartOfDay(startOfWeek);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); 
-      const endDate = getEndOfDay(endOfWeek);
-      
-      console.log('Filtrando por Semana:', startDate.toISOString(), endDate.toISOString());
-      carregarTransacoes(startDate, endDate);
-      setActiveButton('filterSemana');
-    });
-
-    btnMes.addEventListener('click', () => {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const startDate = getStartOfDay(new Date(year, month, 1)); 
-      const endDate = getEndOfDay(new Date(year, month + 1, 0)); 
-      
-      console.log('Filtrando por Mês:', startDate.toISOString(), endDate.toISOString());
-      carregarTransacoes(startDate, endDate);
-      setActiveButton('filterMes');
-    });
-
-    if(btnHoje) { 
-        btnHoje.click();
-    }
-
-  } else {
-    console.error("Um ou mais botões de filtro não foram encontrados. Verifique os IDs no HTML.");
-  }
-});
 
 function abrirModalEdicao(id) {
   const token = localStorage.getItem("token");
