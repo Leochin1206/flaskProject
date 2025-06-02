@@ -18,6 +18,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     }
 
     const data = await response.json();
+    console.log("teste", data.token)
     localStorage.setItem("token", data.token); // <-- "token" e não "access"
     window.location.href = "/home";
   } catch (error) {
