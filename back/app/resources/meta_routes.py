@@ -1,15 +1,33 @@
 from flask import Blueprint, request, jsonify
 from app.models.meta import Meta
 from app.extensions import db
-from flask_jwt_extended import jwt_required
-from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime, date 
 
 meta_bp = Blueprint('meta', __name__)
 
 @meta_bp.route('/', methods=['GET'])
 @jwt_required()
 def list_metas():
-    return jsonify([{k: v for k, v in m.__dict__.items() if k != '_sa_instance_state'} for m in Meta.query.all()])
+    current_user_id = get_jwt_identity()
+
+    if not current_user_id:
+        return jsonify({"msg": "Identidade do usuário não encontrada no token."}), 401
+
+    metas_do_usuario = Meta.query.filter_by(id_usuario=current_user_id).all()
+
+    lista_serializada = []
+    for m in metas_do_usuario:
+        meta_data = {}
+        for column in m.__table__.columns: 
+            value = getattr(m, column.name)
+            if isinstance(value, date) or isinstance(value, datetime): 
+                meta_data[column.name] = value.isoformat()
+            else:
+                meta_data[column.name] = value
+        lista_serializada.append(meta_data)
+
+    return jsonify(lista_serializada)
 
 @meta_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()

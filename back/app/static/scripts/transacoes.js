@@ -41,6 +41,7 @@ document.getElementById('formTransacao').addEventListener('submit', async functi
     } else {
       alert("Erro: " + (result.msg || result.error || 'Erro desconhecido'));
     }
+    window.location.reload();
 
   } catch (err) {
     console.error(err);
@@ -70,119 +71,139 @@ const transacoesTipo = [
 document.addEventListener('DOMContentLoaded', carregarTransacoes);
 
 async function carregarTransacoes(startDate, endDate) {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
-    if (!token) {
-        alert("Token não encontrado. Faça login.");
-        return;
-    }
+  if (!token) {
+      alert("Token não encontrado. Faça login.");
+      return;
+  }
 
-    let url = 'http://127.0.0.1:5000/transacao/get';
-    const params = new URLSearchParams();
+  let url = 'http://127.0.0.1:5000/transacao/get';
+  const params = new URLSearchParams();
 
-    if (startDate) {
-        params.append('startDate', startDate.toISOString());
-    }
-    if (endDate) {
-        params.append('endDate', endDate.toISOString());
-    }
+  if (startDate) {
+      params.append('startDate', startDate.toISOString());
+  }
+  if (endDate) {
+      params.append('endDate', endDate.toISOString());
+  }
 
-    const queryString = params.toString();
-    if (queryString) {
-        url += `?${queryString}`;
-    }
+  const queryString = params.toString();
+  if (queryString) {
+      url += `?${queryString}`;
+  }
 
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        });
+  try {
+      const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+              'Authorization': 'Bearer ' + token
+          }
+      });
 
-        const data = await response.json();
-        console.log('Dados recebidos para o filtro:', data);
+      const data = await response.json();
+      console.log('Dados recebidos para o filtro:', data);
 
-        if (response.ok) {
-            const ul = document.getElementById('listaTransacoes');
-            ul.innerHTML = '';
+      if (response.ok) {
+          const ul = document.getElementById('listaTransacoes');
+          if (!ul) { 
+              console.error("Elemento com ID 'listaTransacoes' não encontrado no DOM.");
+              return;
+          }
+          ul.innerHTML = '';
 
-            data.forEach(t => {
-                const tipoObj = transacoesTipo.find(tipo => tipo.value === t.categoria);
-                const icone = tipoObj ? tipoObj.icone : "more-horizontal";
+          if (data && data.length > 0) { 
+              data.forEach(t => {
+                  const tipoObj = typeof transacoesTipo !== 'undefined' ? transacoesTipo.find(tipo => tipo.value === t.categoria) : null;
+                  const icone = tipoObj ? tipoObj.icone : "more-horizontal";
 
-                const valorTransacao = (typeof t.valor === "number" && !isNaN(t.valor)) ? t.valor : 0;
-                let valorDivColorClass = 'text-gray-700';
-                let iconColorClass = 'text-gray-500';
+                  const valorTransacao = (typeof t.valor === "number" && !isNaN(t.valor)) ? t.valor : 0;
+                  let valorDivColorClass = 'text-gray-700';
+                  let iconColorClass = 'text-gray-500';
 
-                if (valorTransacao > 0) {
-                    valorDivColorClass = 'text-green-600';
-                    iconColorClass = 'text-green-600';
-                } else if (valorTransacao < 0) {
-                    valorDivColorClass = 'text-red-600';
-                    iconColorClass = 'text-red-600';
-                }
-                const valorDisplay = valorTransacao.toFixed(2).replace('.', ',');
-                let dataExibicao;
-                if (t.data && typeof t.data === 'string') { 
-                    const dataStringApenasData = t.data.substring(0, 10);
-                    const partesData = dataStringApenasData.split('-');
+                  if (valorTransacao > 0) {
+                      valorDivColorClass = 'text-green-600';
+                      iconColorClass = 'text-green-600';
+                  } else if (valorTransacao < 0) {
+                      valorDivColorClass = 'text-red-600';
+                      iconColorClass = 'text-red-600';
+                  }
 
-                    if (partesData.length === 3) {
-                        const ano = parseInt(partesData[0], 10);
-                        const mes = parseInt(partesData[1], 10) - 1; 
-                        const dia = parseInt(partesData[2], 10);
+                  const valorDisplay = valorTransacao.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      minimumFractionDigits: 2, 
+                      maximumFractionDigits: 2  
+                  });
 
-                        // Validação básica das partes
-                        if (!isNaN(ano) && !isNaN(mes) && !isNaN(dia)) {
-                            const dataLocal = new Date(ano, mes, dia);
-                            dataExibicao = dataLocal.toLocaleDateString("pt-BR", { timeZone: 'America/Sao_Paulo' });
-                        } else {
-                            dataExibicao = "Data inválida (partes)"; 
-                        }
-                    } else {
-                        console.warn(`Formato de data inesperado para t.data: ${t.data}. Usando fallback.`);
-                        const dataFallback = new Date(t.data); 
-                        dataExibicao = dataFallback.isValid() ? dataFallback.toLocaleDateString("pt-BR") : "Data inválida (fallback)";
-                    }
-                } else {
-                    dataExibicao = "Data não fornecida";
-                }
+                  let dataExibicao;
+                  if (t.data && typeof t.data === 'string') {
+                      const dataStringApenasData = t.data.substring(0, 10);
+                      const partesData = dataStringApenasData.split('-');
 
-                const li = document.createElement('li');
-                li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-[800px]";
-                li.innerHTML = `
-                    <div class="absolute top-4 right-4 ${iconColorClass} w-10 h-10" data-lucide="${icone}"></div>
-                    <div class="w-full space-y-2">
-                        <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
-                        <div class="${valorDivColorClass} font-bold">
-                            <span class="font-semibold">Valor:</span> R$${valorDisplay}
-                        </div>
-                        <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
-                        <div><span class="font-semibold">Data:</span> ${dataExibicao}</div> 
-                        <div><span class="font-semibold">Descrição:</span> ${t.descricao || ''}</div>
-                        <div class="flex justify-end gap-4 pt-2">
-                            <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
-                            <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
-                        </div>
-                    </div>
-                `;
-                ul.appendChild(li);
-            });
+                      if (partesData.length === 3) {
+                          const ano = parseInt(partesData[0], 10);
+                          const mes = parseInt(partesData[1], 10) - 1;
+                          const dia = parseInt(partesData[2], 10);
 
-            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                lucide.createIcons();
-            } else {
-                console.warn('Lucide icons não foram carregados ou a função createIcons não está disponível.');
-            }
+                          if (!isNaN(ano) && !isNaN(mes) && !isNaN(dia)) {
+                              const dataLocal = new Date(ano, mes, dia);
+                              if (dataLocal.getFullYear() === ano && dataLocal.getMonth() === mes && dataLocal.getDate() === dia) {
+                                  dataExibicao = dataLocal.toLocaleDateString("pt-BR");
+                              } else {
+                                   dataExibicao = "Data inválida (construção)";
+                              }
+                          } else {
+                              dataExibicao = "Data inválida (partes)";
+                          }
+                      } else {
+                          console.warn(`Formato de data inesperado para t.data (sem partes AAAA-MM-DD): ${t.data}. Usando fallback.`);
+                          const dataFallback = new Date(t.data); 
+                          dataExibicao = !isNaN(dataFallback.getTime()) ? dataFallback.toLocaleDateString("pt-BR") : "Data inválida (fallback)";
+                      }
+                  } else {
+                      dataExibicao = "Data não fornecida";
+                  }
 
-        } else {
-            alert("Erro ao carregar transações: " + (data.message || data.error || "Erro desconhecido"));
-        }
-    } catch (err) {
-        console.error("Erro na função carregarTransacoes com filtro:", err);
-        alert("Erro ao buscar transações filtradas. Verifique o console para mais detalhes.");
-    }
+                  const li = document.createElement('li');
+                  li.className = "flex items-start justify-between relative gap-4 bg-gray-100 mb-4 p-4 rounded-lg shadow w-full md:w-[800px]"; // Tornando responsivo
+                  li.innerHTML = `
+                      <div class="absolute top-4 right-4 ${iconColorClass} w-10 h-10" data-lucide="${icone}"></div>
+                      <div class="w-full space-y-2">
+                          <div><span class="font-semibold">Tipo:</span> ${t.tipo}</div>
+                          <div class="${valorDivColorClass} font-bold">
+                              <span class="font-semibold">Valor:</span> ${valorDisplay}
+                          </div>
+                          <div><span class="font-semibold">Categoria:</span> ${t.categoria}</div>
+                          <div><span class="font-semibold">Data:</span> ${dataExibicao}</div>
+                          <div><span class="font-semibold">Descrição:</span> ${t.descricao || 'Sem descrição'}</div>
+                          <div class="flex justify-end gap-4 pt-2">
+                              <button class="text-sm text-blue-600 hover:underline" onclick="abrirModalEdicao(${t.id})">Editar</button>
+                              <button class="text-sm text-red-600 hover:underline" onclick="deletarTransacao(${t.id})">Excluir</button>
+                          </div>
+                      </div>
+                  `;
+                  ul.appendChild(li);
+              });
+          } else {
+              ul.innerHTML = '<li class="text-center text-gray-500 py-4">Nenhuma transação encontrada.</li>';
+          }
+
+
+          if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+              lucide.createIcons();
+          } else {
+              console.warn('Lucide icons não foram carregados ou a função createIcons não está disponível.');
+          }
+
+      } else {
+          const errorData = data || {}; 
+          alert("Erro ao carregar transações: " + (errorData.message || errorData.error || `Erro HTTP ${response.status}`));
+      }
+  } catch (err) {
+      console.error("Erro na função carregarTransacoes com filtro:", err);
+      alert("Erro ao buscar transações filtradas. Verifique o console para mais detalhes.");
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -391,3 +412,23 @@ function fecharModal() {
 function fecharModalEdit() {
   document.getElementById('modalTransacaoEdit').classList.add('hidden');
 }
+
+function handleLogout() {
+  console.log("Executando logout...");
+  localStorage.removeItem('token'); 
+  window.location.href = '/'; 
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutButton = document.getElementById('logoutButton');
+  if (logoutButton) {
+      logoutButton.addEventListener('click', function(event) {
+          event.preventDefault(); 
+          handleLogout();
+      });
+  }
+
+  if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+  }
+});

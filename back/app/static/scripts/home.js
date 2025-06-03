@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const dashboardContentEl = document.getElementById('dashboard-content');
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-    const mockTransactions = [
-        { "tipo": "entrada", "valor": "1500.00", "categoria": "Salário", "data": "2024-05-01T10:00:00Z", "descricao": "Salário mensal", "id_usuario": "user1", "data_criacao": "2024-05-01T10:00:00Z" },
-        { "tipo": "saida", "valor": "80.50", "categoria": "Alimentação", "data": "2024-05-03T12:30:00Z", "descricao": "Almoço", "id_usuario": "user1", "data_criacao": "2024-05-03T12:30:00Z" },
-    ];
-
     async function fetchData() {
         const token = localStorage.getItem('token'); 
 
@@ -42,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
                 console.warn(`Erro na API: ${response.status}. Usando dados de exemplo.`);
-                return mockTransactions;
             }
             
             const data = await response.json();
@@ -51,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error("Falha ao buscar dados da API:", error);
             console.warn("Usando dados de exemplo devido ao erro na API.");
-            return mockTransactions;
         }
     }
 
@@ -229,3 +222,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
+
+function handleLogout() {
+    console.log("Executando logout...");
+    localStorage.removeItem('token'); 
+    window.location.href = '/'; 
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            handleLogout();
+        });
+    }
+  
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+  });

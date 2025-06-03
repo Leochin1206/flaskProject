@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value; // <-- alterado de nome para email
+  const email = document.getElementById("email").value; 
   const senha = document.getElementById("senha").value;
 
   try {
@@ -10,7 +10,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, senha }), // <-- aqui também
+      body: JSON.stringify({ email, senha }), 
     });
 
     if (!response.ok) {
@@ -19,10 +19,12 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     const data = await response.json();
     console.log("teste", data.token)
-    localStorage.setItem("token", data.token); // <-- "token" e não "access"
+    localStorage.setItem("token", data.token); 
     window.location.href = "/home";
   } catch (error) {
     console.error("Erro ao fazer login:", error);
     alert("Usuário ou senha incorretos. Tente novamente.");
   }
 });
+
+

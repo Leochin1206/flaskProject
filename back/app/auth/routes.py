@@ -70,6 +70,4 @@ def profile():
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    # Com JWT stateless, logout pode ser tratado no frontend removendo o token,
-    # ou você pode implementar blacklist se quiser.
     return jsonify({'msg': 'Logout realizado'}), 200

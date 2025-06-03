@@ -39,14 +39,42 @@ def create_usuario():
 @usuario_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_usuario(id):
-    data = request.json
-    u = Usuario.query.get_or_404(id)
-    for k, v in data.items():
-        if k == 'senha' and not v:
-            continue  
-        setattr(u, k, v)
-    db.session.commit()
-    return jsonify({'msg': 'Usuário atualizado com sucesso'})
+    data = request.get_json() 
+    if not data:
+        return jsonify({"error": "Requisição inválida, corpo JSON esperado.", "msg": "Requisição inválida."}), 400
+
+    usuario = Usuario.query.get_or_404(id)
+    senha_para_verificacao = data.pop('senha_atual_verificacao', None) 
+
+    if not senha_para_verificacao:
+        return jsonify({"error": "O campo 'senha_atual_verificacao' é obrigatório.",
+                        "msg": "Por favor, forneça sua senha atual para salvar as alterações."}), 400
+
+    if not bcrypt.check_password_hash(usuario.senha, senha_para_verificacao):
+        return jsonify({"error": "Senha atual incorreta.",
+                        "msg": "A senha atual fornecida está incorreta."}), 401 
+
+    campos_permitidos_para_atualizacao = ['nome', 'email', 'telefone']
+    campos_atualizados = False
+
+    for campo in campos_permitidos_para_atualizacao:
+        if campo in data: 
+            novo_valor = data[campo]
+            if getattr(usuario, campo) != novo_valor:
+                setattr(usuario, campo, novo_valor)
+                campos_atualizados = True
+    
+    if campos_atualizados:
+        try:
+            db.session.commit()
+            return jsonify({'msg': 'Usuário atualizado com sucesso!'}), 200
+        except Exception as e:
+            db.session.rollback()
+            print(f"Erro ao commitar no banco: {e}")
+            return jsonify({'error': 'Erro ao salvar as alterações no banco de dados.', 
+                            'msg': 'Não foi possível salvar as alterações. Tente novamente.'}), 500
+    else:
+        return jsonify({'msg': 'Nenhum dado foi modificado.'}), 200
 
 @usuario_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
