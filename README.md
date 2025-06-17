@@ -1,3 +1,7 @@
+- Andre Luis Sousa Dantas: 202403945487
+- Daniel Lucas dos Santos Corte: 202403517949
+- Leonardo Albergoni Viana: 202402393626
+
 # Finzy
 
 Consiste em desenvolver uma plataforma para organização financeira pessoal. O sistema permite o cadastro de usuários e armazenamento de seus dados para facilitar a gestão de informações como nome completo, telefone e email. O foco principal está na simplicidade e eficiência da aplicação usando Flask e SQLite.
